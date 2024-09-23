@@ -1,105 +1,196 @@
-# FoodAdvisor - Strapi Demo
 
-![FoodAdvisor](./foodadvisor.png)
+# CS360 1/2567 Term Project: [Project Name]
 
-Welcome to FoodAdvisor, the official Strapi demo application.
-This repository contains the following:
+## Group Information
 
-- Strapi project with existing Content-types and data (`/api`)
-- Next.js client ready to fetch the content of the Strapi application (`/client`)
+- **Group Name:**  คุณชาย
 
-[![Open in Gitpod](https://camo.githubusercontent.com/76e60919474807718793857d8eb615e7a50b18b04050577e5a35c19421f260a3/68747470733a2f2f676974706f642e696f2f627574746f6e2f6f70656e2d696e2d676974706f642e737667)](http://gitpod.io/#https://github.com/strapi/foodadvisor)
+## Members
 
-## Get started
+- Thanadech Parnniam 6509650435
 
-You can get started with this project locally on your machine by following the instructions below or you can [request a private instance on our website](https://strapi.io/demo).
+- Pheera Phuangphi      6509650617
 
-## Prerequisites
+- Pattarapol Khaofon    6509650625
 
-Be sure to have the correct env variables for each part:
+- Panuwat Kongmark    6509650633
 
-- Strapi (example in `./api/.env.example`):
-  - `STRAPI_ADMIN_CLIENT_URL=<url-of-nextjs>`
-  - `STRAPI_ADMIN_CLIENT_PREVIEW_SECRET=<a-random-token>`
+- Phurinat Musikanon   6509650658
 
-- Next.js (already in `./client/.env.development`):
-  - `NEXT_PUBLIC_API_URL=<url-of-strapi>`
-  - `PREVIEW_SECRET=<the-same-random-token-as-for-strapi>`
+## Project Goal
 
-## 1. Clone FoodAdvisor
+The project goal is to improve the existing foodadvisor application by enhancing its features and simplifying the deployment process for users. The aim is to develop a web application that offers users a comprehensive platform for exploring and managing food-related content. It focuses on solving the problem of finding and managing food options through features like secure user registration, advanced search, community-driven reviews, and integration with external APIs for additional information.
 
-- Clone the repository by running the following command:
+### Features
+- **Feature 1 User Registration and Authentication**: Implement secure user login and registration, allowing users to save their preferences.
+- **Feature 2 CRUD Operations**: Ensure full support for Create, Read, Update, and Delete operations for recipes or food items.
+- **Feature 3 Search and Filter**: Add advanced search options and filters for users to easily find food options based on dietary preferences, cuisine types, or ratings.
+- **Feature 4 Review and Rating System**: Allow users to leave reviews and rate food options, contributing to community feedback.
+- **Feature 5 Bookmarking**: Enable users to bookmark their favorite recipes or restaurants for easy access later.
+- **Feature 6 API Integration**: Integrate with third-party APIs for nutrition information, recipe suggestions, or location-based services.
+- **Feature 7 User Dashboard**: Create a personalized dashboard where users can view their activity, favorite items, and recommendations.
+- **Feature 8 Documentation and Tutorials**: Enhance documentation and provide tutorials or guides for users on how to use the application effectively.
+- **Feature 9 Responsive design for desktop users**
 
+### Technologies Used
+
+- **Backend:** Strapi V4
+
+- **Frontend:** React.js 
+
+- **Hosting/Deployment:** AWS EC2
+
+- **Database:**  SQLite
+
+## How to deploy and run the project manually
+
+**1. Create an EC2 Instance**
+ - Use Amazon EC2 to create a new instance.
+ - Choose **Ubuntu Server** as the AMI (Amazon Machine Image).
+ - Set the instance type to **t2.medium** or higher.
+ - Connect to your EC2 instance via Command Prompt or Terminal.
+ 
+**2.Install Required Tools for the Project**
+ - Run the following commands to install all necessary tools:
 ```
-git clone https://github.com/strapi/foodadvisor.git
-```
-
-- Navigate to your project folder by running `cd foodadvisor`.
-
-## 2. Start Strapi
-
-Navigate to your `./my-projects/foodadvisor/api` folder by running `cd api` from your command line.
-
-- Run the following command in your `./foodadvisor/api` folder:
-
-```
-yarn && yarn seed && yarn develop
-```
-
-This will install the dependencies, fill your application with data and run your server. You can run these commands separately.
-
-#### Credentials
-
-- Super Admin:
-  - email: admin@strapidemo.com
-  - password: welcomeToStrapi123
-
-- Editor
-  - email: editor@strapidemo.com
-  - password: welcomeToStrapi123
-
-- Author
-  - email: author@strapidemo.com
-  - password: welcomeToStrapi123
-
-## 3. Start Next.js
-
-Navigate to your `./my-projects/foodadvisor/client` folder by running `cd client` from your command line.
-
-- Run the following command in your `./foodadvisor/client` folder
-
-```
-yarn && yarn dev
+# Update the system 
+sudo yum update -y 
+# Install Node.js 
+sudo yum install -y nodejs 
+# Install Git 
+sudo yum install -y git 
+# Install NPM (Node Package Manager) version 10.8.3 
+sudo npm install -g npm@10.8.3 
+# Install Development Tools 
+sudo yum groupinstall 'Development Tools' -y 
+# Install Yarn (Package manager for Node.js) 
+npm install -g yarn
 ```
 
-This will install the dependencies, and run your server. You can run these commands separately.
+**3.Clone the Project from GitHub to EC2 Instance**
+ - Use Git to clone the project repository:
+ ```
+ git clone https://github.com/Phurinat-Musikanon-6509650658/CS360foodadvisor.git
+```
 
-## Features overview
+**4.Change Directory into Project**
+- Navigate into the project directory: `cd CS360foodadvisor`
 
-### User
+**5.Start the Strapi Server**
+- Change directory into the `api` folder by using `cd api`
+- Install all dependencies and seed the database by using `yarn && yarn seed`
+- Start the Strapi server by using `yarn develop`
 
-<br />
+## How to deploy and run the project using the provided bash script [Specify the bash script path in the repo]
 
-**An intuitive, minimal editor** The editor allows you to pull in dynamic blocks of content. It’s 100% open-source, and it’s fully extensible.<br />
-**Media Library** Upload images, video or any files and crop and optimize their sizes, without quality loss.<br />
-**Flexible content management** Build any type of category, section, format or flow to adapt to your needs. <br />
-**Sort and Filter** Built-in sorting and filtering: you can manage thousands of entries without effort.<br />
-**User-friendly interface** The most user-friendly open-source interface on the market.<br />
-**SEO optimized** Easily manage your SEO metadata with a repeatable field and use our Media Library to add captions, notes, and custom filenames to optimize the SEO of media assets.<br /><br />
+**1. Create an EC2 Instance**
+ - Log in to your AWS account and navigate to the **EC2 Dashboard.**
+ - Click **Launch Instance** to create a new instance.
+ - Choose **Ubuntu Server** as the AMI (Amazon Machine Image).
+ - Select **t2.medium**  as the instance type to ensure sufficient resources for your project.
+ - Configure the security group, ensuring ports like **22 (SSH)** and **1337 (Strapi)** are open.
+ - Create or choose an existing **key pair** to securely connect to the instance.
+ - Launch the instance and wait for it to initialize.
 
-### Global
+**2. Connect to the EC2**
 
-<br />
+ - Obtain the public **IP address** from the EC2 dashboard.
+ - Open the terminal and connect to the instance via SSH using the key pair
+```
+ssh -i /path/to/your-key.pem ubuntu@your-ec2-public-ip
+```
 
-[Customizable API](https://strapi.io/features/customizable-api): Automatically build out the schema, models, controllers for your API from the editor. Get REST or GraphQL API out of the box without writing a single line of code.<br />
-[Media Library](https://strapi.io/features/media-library): The media library allows you to store your images, videos and files in your Strapi admin panel with many ways to visualize and manage them.<br />
-[Role-Based Access Control (RBAC)](https://strapi.io/features/custom-roles-and-permissions): Role-Based Access Control is a feature available in the Administration Panel settings that let your team members have access rights only to the information they need.<br />
-[Internationalization (i18n)](https://strapi.io/features/internationalization): Internationalization (i18n) lets you create many content versions, also called locales, in different languages and for different countries.<br />
-[Audit Logs](https://strapi.io/blog/reasons-and-best-practices-for-using-audit-logs-in-your-application)The Audit Logs section provides a searchable and filterable display of all activities performed by users of the Strapi application<br />
-[Data transfer](https://strapi.io/blog/importing-exporting-and-transferring-data-with-the-strapi-cli) Streams your data from one Strapi instance to another Strapi instance.<br />
-[Review Worfklows](https://docs.strapi.io/user-docs/settings/review-workflows) Create and manage any desired review stages for your content, enabling your team to collaborate in the content creation flow from draft to publication. <br />
+**3. Run the Application Automatically Using the Bash Script**
 
+ - After connecting to your EC2 instance, the application will be deployed and run automatically by executing the bash script provided below.
+```
+#!/bin/bash                            
+check_status() { 
+  if [ $? -ne 0 ]; then 
+    echo "Error: $1 failed. Exiting." 
+    exit 1 
+  fi 
+}                                     
 
-## Resources
+# Update package 
+echo "Updating package..." 
+sudo yum update 0-y                    
 
-[Docs](https://docs.strapi.io) • [Demo](https://strapi.io/demo) • [Next.js Starter](https://github.com/strapi/nextjs-corporate-starter) • [Forum](https://forum.strapi.io/) • [Discord](https://discord.strapi.io) • [Youtube](https://www.youtube.com/c/Strapi/featured) • [Try Enterprise Edition](https://strapi.io/enterprise) • [Strapi Design System](https://design-system.strapi.io/) • [Marketplace](https://market.strapi.io/) • [Clou Free Trial](https://cloud.strapi.io) 
+# install node.js 
+install_node() { 
+  echo "Intalling Node.js..." 
+  sudo yum install -y nodejs 
+  clear 
+  check_status "Node.js installation" 
+}                                     
+
+# install git 
+install_git() { 
+  echo "Installing git..." 
+  sudo yum install -y git 
+  clear 
+  check_status "Git installation" 
+}              
+                        
+
+# install npm v10 
+install_npm() { 
+  echo "Installing npm..." 
+  sudo npm install -g npm@10.8.3 
+  clear 
+  check_status "npm installation" 
+}               
+                 
+# install dev tool 
+install_devtool() { 
+  echo "Installing Development Tool..." 
+  sudo yum groupinstall 'Development Tools' -y 
+  clear 
+  check_status "Development tools installation" 
+}         
+                         
+# install yarn 
+install_yarn() { 
+  echo "Installing yarn" 
+  sudo npm install -g yarn 
+  clear 
+  check_status "yarn installation" 
+}                       
+
+# Clone project from github 
+clone_repo() { 
+  echo "Cloning the repository..." 
+  git clone https://github.com/Phurinat-Musikanon-6509650658/CS360foodadvisor.git 
+  clear 
+  check_status "Cloning git repository" 
+}                    
+
+install_nvm() { 
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash 
+  export NVM_DIR="$HOME/.nvm" 
+  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm 
+  [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads 
+nvm bash_completion 
+  nvm install 16 
+  nvm use 16 
+  clear 
+}         
+                  
+install_node
+install_git
+install_npm
+install_devtool
+install_yarn
+clone_repo
+cd CS360foodadvisor 
+cd api
+install_nvm
+yarn
+clear
+yarn seed
+clear
+yarn develop
+```
+
+[ภาพ screen capture ของหน้าเว็บแอปพลิเคชันซึ่ง deploy ไวบ้ น EC2]
+
