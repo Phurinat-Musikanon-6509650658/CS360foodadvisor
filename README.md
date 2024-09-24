@@ -192,5 +192,7 @@ clear
 yarn develop
 ```
 
-[ภาพ screen capture ของหน้าเว็บแอปพลิเคชันซึ่ง deploy ไวบ้ น EC2]
+[ภาพ screen capture ของหน้าเว็บแอปพลิเคชันซึ่ง deploy ไว้บน EC2]
+![image](https://github.com/user-attachments/assets/3e4f71f2-0a51-4a1f-999d-9fec108b8157)
+
 
