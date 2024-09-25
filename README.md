@@ -1,5 +1,4 @@
-
-# CS360 1/2567 Term Project: [Project Name]
+# CS360 1/2567 Term Project: [FoodAdvisor]
 
 ## Group Information
 
@@ -7,9 +6,9 @@
 
 ## Members
 
-- Thanadech Parnniam 6509650435
+- Thanadech Parnniam	6509650435
 
-- Pheera Phuangphi      6509650617
+- Pheera Phuangphi		6509650617
 
 - Pattarapol Khaofon    6509650625
 
@@ -45,50 +44,135 @@ The project goal is to improve the existing foodadvisor application by enhancing
 ## How to deploy and run the project manually
 
 **1. Create an EC2 Instance**
- - Use Amazon EC2 to create a new instance.
- - Choose **Ubuntu Server** as the AMI (Amazon Machine Image).
- - Set the instance type to **t2.medium** or higher.
- - Connect to your EC2 instance via Command Prompt or Terminal.
+ - Use Amazon `EC2` to create a new instance.
+ - Choose `Amazon Linux` as the AMI (Amazon Machine Image).
+ - Set the instance type to `t2.medium` or higher.
+ - Connect to your `EC2` instance via Command Prompt or Terminal.
+ -  **Configure Security Group Rules**:
+    -   **Type**:  `SSH`,  **Protocol**:  `TCP`,  **Port Range**:  `22`,  **Source**:  `::/0`
+ 
+    -   **Type**:  `HTTP`,  **Protocol**:  `TCP`,  **Port Range**:  `80`,  **Source**:  `0.0.0.0/0, ::/0`
+    
+    -   **Type**:  `HTTPS`,  **Protocol**:  `TCP`,  **Port Range**:  `443`,  **Source**:  `0.0.0.0/0, ::/0` 
+    
+    -   **Type**:  `Custom TCP Rule`,  **Protocol**:  `TCP`,  **Port Range**:  `1337`,  **Source**:  `0.0.0.0/0`
+    
+    -   **Type**:  `Custom TCP Rule`,  **Protocol**:  `TCP`,  **Port Range**:  `3000`,  **Source**:  `0.0.0.0/0`
  
 **2.Install Required Tools for the Project**
+- System require :
+	- node (version 16)
+	- npm (6.0.0 or above)
  - Run the following commands to install all necessary tools:
-```
+```bash
+#Install nvm
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash 	
+source ~/.bashrc	
+nvm install 16	
+nvm use 16	
+node -v
 # Update the system 
 sudo yum update -y 
-# Install Node.js 
-sudo yum install -y nodejs 
 # Install Git 
 sudo yum install -y git 
-# Install NPM (Node Package Manager) version 10.8.3 
-sudo npm install -g npm@10.8.3 
 # Install Development Tools 
 sudo yum groupinstall 'Development Tools' -y 
 # Install Yarn (Package manager for Node.js) 
 npm install -g yarn
+# Install PM2
+npm install -g pm2
 ```
 
 **3.Clone the Project from GitHub to EC2 Instance**
  - Use Git to clone the project repository:
- ```
- git clone https://github.com/Phurinat-Musikanon-6509650658/CS360foodadvisor.git
+```bash
+git clone https://github.com/Phurinat-Musikanon-6509650658/CS360foodadvisor.git
 ```
 
-**4.Change Directory into Project**
+**4.Setup environment for Project**
 - Navigate into the project directory: `cd CS360foodadvisor`
+- **Backend**
+	- change directory to `api` and create file `.env` with command
+	```bash
+	nano .env
 
-**5.Start the Strapi Server**
-- Change directory into the `api` folder by using `cd api`
-- Install all dependencies and seed the database by using `yarn && yarn seed`
-- Start the Strapi server by using `yarn develop`
+	#and then put this command int to .env file
+	HOST=0.0.0.0
+	PORT=1337
+	STRAPI_ADMIN_CLIENT_URL=http://localhost:3000
+	STRAPI_ADMIN_CLIENT_PREVIEW_SECRET=ARNFCb9zrC9ZHm5hZzCigWivD40icS4s
+	```
 
-## How to deploy and run the project using the provided bash script [Specify the bash script path in the repo]
+- next exit nano and run this command
+
+```bash
+#random secret
+openssl rand -base64 32
+```
+	- you will get random key and then keep this key replace in `.env` be hide `STRAPI_ADMIN_CLIENT_PREVIEW_SECRET=`
+- **Frontend**
+	- change directory to `client` and create file `.env`
+	```bash
+	NEXT_PUBLIC_API_URL=http://127.0.0.1:1337
+	PREVIEW_SECRET=ARNFCb9zrC9ZHm5hZzCigWivD40icS4s
+	```
+- next exit nano and run this command
+
+	```bash
+	#random secret
+	openssl rand -base64 32
+	```
+	- you will get random key and then keep this key replace in `.env` be hide `STRAPI_ADMIN_CLIENT_PREVIEW_SECRET=`
+
+**5.Start the Strapi Server with PM2**
+- **Backend**
+	- Change directory into the `/api` folder by using `cd api`
+	- Install all dependencies and seed the database by using `yarn && yarn seed`
+	- Start the Strapi server by using 
+	```bash
+	pm2 start yarn --name BackendStrapi -- develop
+	```
+- **Frontend**
+	- Change directory into `/client` folder by using `cd client`
+	- Install all dependencies and seed the database by using `yarn`
+	- Start the Strapi server by using 
+	```bash
+	pm2 start yarn --name FrontendStrapi -- develop`
+	```
+This will install the dependencies, fill your application with data and run your server. You can run these commands separately.
+
+#### Credentials
+-   Super Admin:
+    
+    -   email:  admin@strapidemo.com
+    -   password: welcomeToStrapi123
+-   Editor
+    
+    -   email:  editor@strapidemo.com
+    -   password: welcomeToStrapi123
+-   Author
+    
+    -   email:  author@strapidemo.com
+    -   password: welcomeToStrapi123
+
+## How to deploy and run the project using the provided bash script [Specify the bash script path in the repository]
 
 **1. Create an EC2 Instance**
- - Log in to your AWS account and navigate to the **EC2 Dashboard.**
- - Click **Launch Instance** to create a new instance.
- - Choose **Ubuntu Server** as the AMI (Amazon Machine Image).
- - Select **t2.medium**  as the instance type to ensure sufficient resources for your project.
- - Configure the security group, ensuring ports like **22 (SSH)** and **1337 (Strapi)** are open.
+ - Log in to your AWS account and navigate to the `EC2 Dashboard.`
+ - Click `Launch Instance` to create a new instance.
+ - Choose `Ubuntu Server` as the AMI (Amazon Machine Image).
+- Select `t2.medium`  as the instance type to ensure sufficient resources for your project.
+ - **Configure Security Group Rules**:
+    
+    -   **Type**:  `SSH`,  **Protocol**:  `TCP`,  **Port Range**:  `22`,  **Source**:  `::/0`
+        
+    -   **Type**:  `HTTP`,  **Protocol**:  `TCP`,  **Port Range**:  `80`,  **Source**:  `0.0.0.0/0, ::/0`
+        
+    -   **Type**:  `HTTPS`,  **Protocol**:  `TCP`,  **Port Range**:  `443`,  **Source**:  `0.0.0.0/0, ::/0`
+        
+    -   **Type**:  `Custom TCP Rule`,  **Protocol**:  `TCP`,  **Port Range**:  `1337`,  **Source**:  `0.0.0.0/0`
+        
+    -   **Type**:  `Custom TCP Rule`,  **Protocol**:  `TCP`,  **Port Range**:  `3000`,  **Source**:  `0.0.0.0/0`
  - Create or choose an existing **key pair** to securely connect to the instance.
  - Launch the instance and wait for it to initialize.
 
@@ -96,103 +180,33 @@ npm install -g yarn
 
  - Obtain the public **IP address** from the EC2 dashboard.
  - Open the terminal and connect to the instance via SSH using the key pair
-```
+```bash
 ssh -i /path/to/your-key.pem ubuntu@your-ec2-public-ip
 ```
 
 **3. Run the Application Automatically Using the Bash Script**
 
- - After connecting to your EC2 instance, the application will be deployed and run automatically by executing the bash script provided below.
-```
-#!/bin/bash                            
-check_status() { 
-  if [ $? -ne 0 ]; then 
-    echo "Error: $1 failed. Exiting." 
-    exit 1 
-  fi 
-}                                     
+Install Git Run the following commands
+ ```bash
+ #Update package
+sudo yum update -y
 
-# Update package 
-echo "Updating package..." 
-sudo yum update 0-y                    
+#Install git
+sudo yum install git -y
 
-# install node.js 
-install_node() { 
-  echo "Intalling Node.js..." 
-  sudo yum install -y nodejs 
-  clear 
-  check_status "Node.js installation" 
-}                                     
+#Clone repository
+git clone https://github.com/Phurinat-Musikanon-6509650658/CS360foodadvisor.git
 
-# install git 
-install_git() { 
-  echo "Installing git..." 
-  sudo yum install -y git 
-  clear 
-  check_status "Git installation" 
-}              
-                        
+#chang directory to project
+cd CS360foodadvisor
 
-# install npm v10 
-install_npm() { 
-  echo "Installing npm..." 
-  sudo npm install -g npm@10.8.3 
-  clear 
-  check_status "npm installation" 
-}               
-                 
-# install dev tool 
-install_devtool() { 
-  echo "Installing Development Tool..." 
-  sudo yum groupinstall 'Development Tools' -y 
-  clear 
-  check_status "Development tools installation" 
-}         
-                         
-# install yarn 
-install_yarn() { 
-  echo "Installing yarn" 
-  sudo npm install -g yarn 
-  clear 
-  check_status "yarn installation" 
-}                       
+#chang permission for execute
+chmod +x bash_script.sh
 
-# Clone project from github 
-clone_repo() { 
-  echo "Cloning the repository..." 
-  git clone https://github.com/Phurinat-Musikanon-6509650658/CS360foodadvisor.git 
-  clear 
-  check_status "Cloning git repository" 
-}                    
+#start project
+./bash_script.sh
+ ```
 
-install_nvm() { 
-  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash 
-  export NVM_DIR="$HOME/.nvm" 
-  [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm 
-  [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads 
-nvm bash_completion 
-  nvm install 16 
-  nvm use 16 
-  clear 
-}         
-                  
-install_node
-install_git
-install_npm
-install_devtool
-install_yarn
-clone_repo
-cd CS360foodadvisor 
-cd api
-install_nvm
-yarn
-clear
-yarn seed
-clear
-yarn develop
-```
+[ภาพ screen capture ของหน้าเว็บแอปพลิเคชันซึ่ง deploy ไวบ้ น EC2]
 
-[ภาพ screen capture ของหน้าเว็บแอปพลิเคชันซึ่ง deploy ไว้บน EC2]
 ![image](https://github.com/user-attachments/assets/3e4f71f2-0a51-4a1f-999d-9fec108b8157)
-
-
