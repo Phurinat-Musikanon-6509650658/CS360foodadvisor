@@ -61,8 +61,11 @@ The project goal is to improve the existing foodadvisor application by enhancing
  
 **2.Install Required Tools for the Project**
 - System require :
+  - git
 	- node (version 16)
 	- npm (6.0.0 or above)
+  - yarn (version 1.22.22)
+  - pm2 (version 5.4.2)
  - Run the following commands to install all necessary tools:
 ```bash
 #Install nvm
@@ -112,6 +115,7 @@ openssl rand -base64 32
 	- you will get random key and then keep this key replace in `.env` be hide `STRAPI_ADMIN_CLIENT_PREVIEW_SECRET=`
 - **Frontend**
 	- change directory to `client` and create file `.env`
+
 	```bash
 	NEXT_PUBLIC_API_URL=http://127.0.0.1:1337
 	PREVIEW_SECRET=ARNFCb9zrC9ZHm5hZzCigWivD40icS4s
@@ -122,13 +126,14 @@ openssl rand -base64 32
 	#random secret
 	openssl rand -base64 32
 	```
-	- you will get random key and then keep this key replace in `.env` be hide `STRAPI_ADMIN_CLIENT_PREVIEW_SECRET=`
+- you will get random key and then keep this key replace in `.env` be hide `STRAPI_ADMIN_CLIENT_PREVIEW_SECRET=`
 
 **5.Start the Strapi Server with PM2**
 - **Backend**
 	- Change directory into the `/api` folder by using `cd api`
 	- Install all dependencies and seed the database by using `yarn && yarn seed`
 	- Start the Strapi server by using 
+
 	```bash
 	pm2 start yarn --name BackendStrapi -- develop
 	```
@@ -136,6 +141,7 @@ openssl rand -base64 32
 	- Change directory into `/client` folder by using `cd client`
 	- Install all dependencies and seed the database by using `yarn`
 	- Start the Strapi server by using 
+
 	```bash
 	pm2 start yarn --name FrontendStrapi -- develop`
 	```
