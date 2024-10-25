@@ -21,11 +21,7 @@
 The project goal is to improve the existing foodadvisor application by enhancing its features and simplifying the deployment process for users. The aim is to develop a web application that offers users a comprehensive platform for exploring and managing food-related content. It focuses on solving the problem of finding and managing food options through features like secure user registration, advanced search, community-driven reviews, and integration with external APIs for additional information.
 
 ### Features
-- **Feature 1 User Registration and Authentication**: Implement secure user login and registration, allowing users to save their preferences.
-- **Feature 2 CRUD Operations**: Ensure full support for Create, Read, Update, and Delete operations for recipes or food items.
-- **Feature 3 Search and Filter**: Add advanced search options and filters for users to easily find food options based on dietary preferences, cuisine types, or ratings.
-- **Feature 4 Review and Rating System**: Allow users to leave reviews and rate food options, contributing to community feedback.
-- **Feature 5 Bookmarking**: Enable users to bookmark their favorite recipes or restaurants for easy access later.
+- **Feature 1 : Log in
 
 ### Technologies Used
 
