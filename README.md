@@ -26,10 +26,6 @@ The project goal is to improve the existing foodadvisor application by enhancing
 - **Feature 3 Search and Filter**: Add advanced search options and filters for users to easily find food options based on dietary preferences, cuisine types, or ratings.
 - **Feature 4 Review and Rating System**: Allow users to leave reviews and rate food options, contributing to community feedback.
 - **Feature 5 Bookmarking**: Enable users to bookmark their favorite recipes or restaurants for easy access later.
-- **Feature 6 API Integration**: Integrate with third-party APIs for nutrition information, recipe suggestions, or location-based services.
-- **Feature 7 User Dashboard**: Create a personalized dashboard where users can view their activity, favorite items, and recommendations.
-- **Feature 8 Documentation and Tutorials**: Enhance documentation and provide tutorials or guides for users on how to use the application effectively.
-- **Feature 9 Responsive design for desktop users**
 
 ### Technologies Used
 
