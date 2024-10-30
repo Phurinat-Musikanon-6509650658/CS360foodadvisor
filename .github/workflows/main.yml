@@ -22,11 +22,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install -g yarn
-      - name: Download dependencies
+      - name: Download dependencies for Strapi
         working-directory: ./api
-        run: |
-          yarn && yarn seed
-          npm install --save-dev jest supertest
+        run: yarn && yarn seed
+      - name: Download test tool
+        working-directory: ./api
+        run: npm install --save-dev jest supertest
       - name: run test
         working-directory: ./api
         run: npm test
