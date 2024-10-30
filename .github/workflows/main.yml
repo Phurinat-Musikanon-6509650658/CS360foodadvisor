@@ -25,6 +25,6 @@ jobs:
           yarn && yarn seed
           npm install --save-dev jest supertest
       - name: run test
-        working-directory: ./api/test
-        run: yarn test
+        working-directory: ./api
+        run: npm test
       - run: echo "🍏 This job's status is ${{ job.status }}."
