@@ -305,9 +305,39 @@ yarn install && yarn dev
 
 ## Test File Structure
 
+#### Integration Test (branch 'develop-integration-test')
+```
+CS360foodadvisor/
+├── api/
+│   └── tests/
+│       └── auth/
+│           └── index.js           
+├── client/
+│   └── tests/
+│       ├── auth/
+│       │   ├── login.test.js          
+│       │   └── register.test.js       
+
+```
+
+#### Integration Test (branch 'develop-integration-test')
+```
+CS360foodadvisor/
+├── api/
+│   └── tests/
+│       └── auth/
+│           └── index.js           
+├── client/
+│   └── tests/
+│       ├── auth/
+│       │   ├── login.test.js          
+│       │   └── register.test.js       
+
+```
+
 ## Test Coverage
 #### Unit Test
-1. Login and Register Test
+1. Login Test
 ```js
 describe('Login and Register TEST', () => {
     let push;
@@ -338,19 +368,20 @@ describe('Login and Register TEST', () => {
     // Test implementation
 })
 ```
-- Mock API Response: The line fetch.mockResponseOnce simulates an API response, returning a JSON object with a jwt key and a token value ('fake-jwt-token'). This allows us to test without needing a real API connection.
 
-- Render Component: The render (<Login />) function displays the Login component for testing.
+- **Mock API Response**: The line `fetch.mockResponseOnce` simulates an API response, returning a JSON object with a `jwt` key and a token value (`'fake-jwt-token'`). This allows us to test without needing a real API connection.
 
-- Input Data: fireEvent.change simulates entering data into the Email and Password fields.
+- **Render Component**: The `render(<Login />)` function displays the `Login` component for testing.
 
-	- screen.getByPlaceholderText('Email') finds the field with the placeholder Email and sets the value to 'user@example.com'.
-	- screen.getByPlaceholderText('Password') finds the password field and sets it to 'password123'.
-- Click Login Button: The fireEvent.click simulates clicking the button labeled Login to submit the login form.
+- **Input Data**: `fireEvent.change` simulates entering data into the `Email` and `Password` fields.
+   - `screen.getByPlaceholderText('Email')` finds the field with the placeholder `Email` and sets the value to `'user@example.com'`.
+   - `screen.getByPlaceholderText('Password')` finds the password field and sets it to `'password123'`.
 
-- Wait for Redirection: The waitFor function waits for the push function to be called with the path '/profile', confirming that, after a successful login, the page should redirect to the profile page.
+- **Click Login Button**: The `fireEvent.click` simulates clicking the button labeled `Login` to submit the login form.
 
-- Check Token in Local Storage: The line expect(localStorage.getItem('token')).toBe('fake-jwt-token') confirms that the received token was stored in localStorage.
+- **Wait for Redirection**: The `waitFor` function waits for the `push` function to be called with the path `'/profile'`, confirming that, after a successful login, the page should redirect to the `profile` page.
+
+- **Check Token in Local Storage**: The line `expect(localStorage.getItem('token')).toBe('fake-jwt-token')` confirms that the received token was stored in `localStorage`.
 
 ```js
     it('should display error message on login failure', async () => {
@@ -366,7 +397,326 @@ describe('Login and Register TEST', () => {
     });
 ```
 
-2. Login and Register Test
+- **Mock API Response**: The line `fetch.mockResponseOnce` simulates a failed API response, returning an error message (`'Invalid credentials'`) in JSON format and setting the status to `400`. This mimics an unsuccessful login attempt due to incorrect credentials.
+
+- **Render Component**: The `render(<Login />)` function displays the `Login` component, allowing us to simulate user interactions and verify output.
+
+- **Enter Incorrect Data**: 
+   - `fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'wronguser@example.com' } })` simulates typing an incorrect email into the email field.
+   - `fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'wrongpassword' } })` simulates typing an incorrect password into the password field.
+
+- **Click Login Button**: `fireEvent.click(screen.getByText('Login'))` simulates clicking the login button to submit the form.
+
+- **Wait for Error Message**: The `await waitFor(() => screen.getByText('Invalid credentials'))` line waits for the error message `'Invalid credentials'` to appear on the screen, confirming that the component correctly handles and displays login errors when 
+  authentication fails.
+
+2. Register Test
+```js
+describe('Login and Register TEST', () => {
+    let push;
+
+    beforeEach(() => {
+        push = jest.fn();
+        useRouter.mockReturnValue({ push });
+        fetch.resetMocks();
+    });
+
+    it('should Register successfully and redirect to login page', async () => {
+        fetch.mockResponseOnce(JSON.stringify({ jwt: 'fake-jwt-token' }));
+
+        render(<Register/>);
+
+        fireEvent.change(screen.getByPlaceholderText('Username'), { target: { value: 'test1' }});
+        fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test1@gmail.com' }});
+        fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'test1pass' }});
+        fireEvent.change(screen.getByPlaceholderText('Job'), { target: { value: 'Student' }});
+        fireEvent.click(screen.getByText('Register'));
+
+        await waitFor(() => expect(push).toHaveBeenCalledWith('/Login'));
+    })
+    // Test implementation
+})
+```
+
+- **Mock API Response**: The `fetch.mockResponseOnce` line simulates a successful API response, returning a JSON object with a `jwt` key and a token value (`'fake-jwt-token'`). This is used to mock the registration success.
+
+- **Render Component**: `render(<Register/>)` renders the `Register` component so that we can simulate user input and test functionality.
+
+- **Enter Registration Information**:
+   - `fireEvent.change(screen.getByPlaceholderText('Username'), { target: { value: 'test1' }})` simulates typing a username (`'test1'`) into the Username field.
+   - `fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test1@gmail.com' }})` simulates entering an email (`'test1@gmail.com'`).
+   - `fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'test1pass' }})` simulates typing a password (`'test1pass'`).
+   - `fireEvent.change(screen.getByPlaceholderText('Job'), { target: { value: 'Student' }})` simulates entering a job title (`'Student'`).
+
+- **Click Register Button**: `fireEvent.click(screen.getByText('Register'))` simulates clicking the register button to submit the form.
+
+- **Wait for Redirection**: The `await waitFor(() => expect(push).toHaveBeenCalledWith('/Login'))` line waits until the `push` function is called with the path `'/Login'`, confirming that after successful registration, the user is redirected to the login page.
+
+```js
+it('should warning if use wrong Email format', async () => {
+        fetch.mockResponseOnce(JSON.stringify({ error: { message: 'email must be a valid email' }}), { status: 400 })
+
+        render(<Register/>);
+
+        fireEvent.change(screen.getByPlaceholderText('Username'), { target: { value: 'test1' }});
+        fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test1' }});
+        fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'test1pass' }});
+        fireEvent.change(screen.getByPlaceholderText('Job'), { target: { value: 'Student' }});
+        fireEvent.click(screen.getByText('Register'));
+
+        await waitFor(() => screen.getByText('email must be a valid email'));
+    })
+```
+
+- **Mock API Response**: `fetch.mockResponseOnce` simulates a failed response from the API, returning an error message (`'email must be a valid email'`) in JSON format with a `400` status code. This mocks the backend validation of the email format.
+
+- **Render Component**: `render(<Register/>)` renders the `Register` component so we can interact with it.
+
+- **Enter Registration Information with Invalid Email**:
+   - `fireEvent.change(screen.getByPlaceholderText('Username'), { target: { value: 'test1' }})` simulates typing `'test1'` as the username.
+   - `fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test1' }})` simulates entering an invalid email format (`'test1'`), which is missing the typical structure of an email (like `@domain.com`).
+   - `fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'test1pass' }})` simulates entering `'test1pass'` as the password.
+   - `fireEvent.change(screen.getByPlaceholderText('Job'), { target: { value: 'Student' }})` simulates entering `'Student'` as the job.
+
+- **Click Register Button**: `fireEvent.click(screen.getByText('Register'))` simulates clicking the register button to submit the form.
+
+- **Wait for Error Message**: `await waitFor(() => screen.getByText('email must be a valid email'))` waits for the error message `'email must be a valid email'` to appear on the screen, verifying that the component correctly displays a warning when an invalid email 
+   format is used.
+  
+#### Integration Test
+
+
 ## Viewing Test Results
+#### Unit Test (branch 'develop-unit-test')
+```
+ PASS __test__/Register.test.js
+PASS __test__/Login.test.js
+-------------------------------------------------------|---------|----------|---------|---------|---------------------------------------
+File                                                   | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                     
+-------------------------------------------------------|---------|----------|---------|---------|---------------------------------------
+All files                                              |   11.29 |    27.84 |   19.51 |   11.29 |                                       
+ adapters/article                                      |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-21                                  
+ adapters/restaurant                                   |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-21                                  
+ components                                            |   56.75 |       25 |   66.66 |   56.75 |                                       
+  layout.js                                            |     100 |       50 |     100 |     100 | 11                                    
+  no-results.js                                        |       0 |        0 |       0 |       0 | 1-34                                  
+  seo.js                                               |   68.42 |       20 |     100 |   68.42 | 25-50,85-88                           
+ components/blocks/Cta                                 |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-54                                  
+ components/blocks/CtaCommandLine                      |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-29                                  
+ components/blocks/Faq                                 |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-22                                  
+  questions-answers.js                                 |       0 |        0 |       0 |       0 | 1-30                                  
+ components/blocks/Features                            |       0 |        0 |       0 |       0 |                                       
+  feature-cards.js                                     |       0 |        0 |       0 |       0 | 1-34                                  
+  index.js                                             |       0 |        0 |       0 |       0 | 1-15                                  
+ components/blocks/FeaturesWithImages                  |       0 |        0 |       0 |       0 |                                       
+  features-check.js                                    |       0 |        0 |       0 |       0 | 1-35                                  
+  index.js                                             |       0 |        0 |       0 |       0 | 1-45                                  
+ components/blocks/Hero                                |       0 |        0 |       0 |       0 |                                       
+  image-cards.js                                       |       0 |        0 |       0 |       0 | 1-41                                  
+  index.js                                             |       0 |        0 |       0 |       0 | 1-52                                  
+ components/blocks/Pricing                             |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-87                                  
+ components/blocks/RelatedArticles                     |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-25                                  
+ components/blocks/RelatedRestaurants                  |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-25                                  
+ components/blocks/Team                                |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-15                                  
+  member-cards.js                                      |       0 |        0 |       0 |       0 | 1-40                                  
+ components/blocks/Testimonial                         |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-53                                  
+ components/global/Footer                              |   34.81 |    28.57 |   66.66 |   34.81 |                                       
+  columns.js                                           |    37.5 |       50 |     100 |    37.5 | 8-27                                  
+  index.js                                             |   74.46 |       25 |     100 |   74.46 | 20-22,27-32,36-38                     
+  socialNetworks.js                                    |       0 |        0 |       0 |       0 | 1-56                                  
+ components/global/Navbar                              |   48.25 |      100 |      40 |   48.25 |                                       
+  cta.js                                               |   35.71 |      100 |       0 |   35.71 | 4-12                                  
+  index.js                                             |     100 |      100 |     100 |     100 |                                       
+  localSwitch.js                                       |   13.97 |      100 |       0 |   13.97 | 12-91                                 
+  logo.js                                              |     100 |      100 |     100 |     100 |                                       
+  nav.js                                               |   28.57 |      100 |       0 |   28.57 | 5-19                                  
+ components/global/PreviewBanner                       |    9.37 |      100 |       0 |    9.37 |                                       
+  index.js                                             |    9.37 |      100 |       0 |    9.37 | 2-30                                  
+ components/pages/blog/ArticleCard                     |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-30                                  
+ components/pages/blog/ArticleContent                  |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-72                                  
+ components/pages/restaurant/RestaurantCard            |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-48                                  
+ components/pages/restaurant/RestaurantContent         |       0 |        0 |       0 |       0 |                                       
+  gallery.js                                           |       0 |        0 |       0 |       0 | 1-53                                  
+  index.js                                             |       0 |        0 |       0 |       0 | 1-120                                 
+  information.js                                       |       0 |        0 |       0 |       0 | 1-60                                  
+  opening-hours.js                                     |       0 |        0 |       0 |       0 | 1-49                                  
+  price.js                                             |       0 |        0 |       0 |       0 | 1-24                                  
+  review-summary.js                                    |       0 |        0 |       0 |       0 | 1-11                                  
+  stars.js                                             |       0 |        0 |       0 |       0 | 1-40                                  
+ components/pages/restaurant/RestaurantContent/Reviews |       0 |        0 |       0 |       0 |                                       
+  overall-rating.js                                    |       0 |        0 |       0 |       0 | 1-86                                  
+  reviews.js                                           |       0 |        0 |       0 |       0 | 1-102                                 
+ components/pages/restaurant/RichContent               |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-24                                  
+ components/shared/BlockManager                        |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-183                                 
+ components/shared/Container                           |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-11                                  
+ components/shared/CustomLink                          |   33.33 |      100 |       0 |   33.33 |                                       
+  index.js                                             |   33.33 |      100 |       0 |   33.33 | 4-17                                  
+ components/shared/Header                              |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-19                                  
+ components/shared/SocialLogo                          |    6.14 |      100 |       0 |    6.14 |                                       
+  index.js                                             |    6.14 |      100 |       0 |    6.14 | 4-110                                 
+ pages                                                 |       0 |        0 |       0 |       0 |                                       
+  [[...slug]].js                                       |       0 |        0 |       0 |       0 | 1-61                                  
+  _app.js                                              |       0 |        0 |       0 |       0 | 1-45                                  
+  _document.js                                         |       0 |        0 |       0 |       0 | 1-34                                  
+ pages/All_restaurants                                 |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-78                                  
+ pages/Login                                           |     100 |      100 |     100 |     100 |                                       
+  index.js                                             |     100 |      100 |     100 |     100 |                                       
+ pages/Search                                          |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-17                                  
+ pages/api                                             |       0 |        0 |       0 |       0 |                                       
+  exit-preview.js                                      |       0 |        0 |       0 |       0 | 1-8                                   
+  preview.js                                           |       0 |        0 |       0 |       0 | 1-29                                  
+ pages/blog                                            |       0 |        0 |       0 |       0 |                                       
+  [slug].js                                            |       0 |        0 |       0 |       0 | 1-61                                  
+  index.js                                             |       0 |        0 |       0 |       0 | 1-191                                 
+ pages/profile                                         |       0 |        0 |       0 |       0 |                                       
+  index.js                                             |       0 |        0 |       0 |       0 | 1-118                                 
+ pages/register                                        |     100 |      100 |     100 |     100 |                                       
+  index.js                                             |     100 |      100 |     100 |     100 |                                       
+ pages/restaurants                                     |       0 |        0 |       0 |       0 |                                       
+  [slug].js                                            |       0 |        0 |       0 |       0 | 1-60                                  
+  index.js                                             |       0 |        0 |       0 |       0 | 1-226                                 
+ utils                                                 |   11.44 |      100 |       0 |   11.44 |                                       
+  hooks.js                                             |   14.28 |      100 |       0 |   14.28 | 4-21                                  
+  index.js                                             |    9.09 |      100 |       0 |    9.09 | 4-11,14-17,20-42,45-84,87-117,120-143 
+  localize.js                                          |   15.27 |      100 |       0 |   15.27 | 5-9,12-23,25-40,43-50,53-72           
+-------------------------------------------------------|---------|----------|---------|---------|---------------------------------------
+
+Test Suites: 2 passed, 2 total
+Tests:       4 passed, 4 total
+Snapshots:   0 total
+Time:        5.28 s
+```
+
+#### Integration Test (branch 'develop-integration-test')
+```
+ PASS  test/app.test.js (9.047 s)
+  strapi instance
+    ✓ is defined (2 ms)
+  Login API Test
+    ✓ should register (178 ms)
+    ✓ should return JWT token when login is successful (101 ms)
+    ✓ should return error message when login fails (34 ms)
+    ✓ should error when EMAIL of Username are already in use (20 ms)
+    ✓ should error if Register with wrong EMAIL format (21 ms)
+    ✓ should error if not enter JOB when register (28 ms)
+
+-----------------------------|---------|----------|---------|---------|-------------------
+File                         | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+-----------------------------|---------|----------|---------|---------|-------------------
+All files                    |     100 |      100 |     100 |     100 |
+ article/controllers         |     100 |      100 |     100 |     100 |
+  article.js                 |     100 |      100 |     100 |     100 |
+ article/routes              |     100 |      100 |     100 |     100 |
+  article.js                 |     100 |      100 |     100 |     100 |
+ article/services            |     100 |      100 |     100 |     100 |
+  article.js                 |     100 |      100 |     100 |     100 |
+ blog-page/controllers       |     100 |      100 |     100 |     100 |
+  blog-page.js               |     100 |      100 |     100 |     100 |
+ blog-page/routes            |     100 |      100 |     100 |     100 |
+  blog-page.js               |     100 |      100 |     100 |     100 |
+ blog-page/services          |     100 |      100 |     100 |     100 |
+  blog-page.js               |     100 |      100 |     100 |     100 |
+ category/controllers        |     100 |      100 |     100 |     100 |
+  category.js                |     100 |      100 |     100 |     100 |
+ category/routes             |     100 |      100 |     100 |     100 |
+  category.js                |     100 |      100 |     100 |     100 |
+ category/services           |     100 |      100 |     100 |     100 |
+  category.js                |     100 |      100 |     100 |     100 |
+ global/controllers          |     100 |      100 |     100 |     100 |
+  global.js                  |     100 |      100 |     100 |     100 |
+ global/routes               |     100 |      100 |     100 |     100 |
+  global.js                  |     100 |      100 |     100 |     100 |
+ global/services             |     100 |      100 |     100 |     100 |
+  global.js                  |     100 |      100 |     100 |     100 |
+ page/controllers            |     100 |      100 |     100 |     100 |
+  page.js                    |     100 |      100 |     100 |     100 |
+ page/routes                 |     100 |      100 |     100 |     100 |
+  page.js                    |     100 |      100 |     100 |     100 |
+ page/services               |     100 |      100 |     100 |     100 |
+  page.js                    |     100 |      100 |     100 |     100 |
+ place/controllers           |     100 |      100 |     100 |     100 |
+  place.js                   |     100 |      100 |     100 |     100 |
+ place/routes                |     100 |      100 |     100 |     100 |
+  place.js                   |     100 |      100 |     100 |     100 |
+ place/services              |     100 |      100 |     100 |     100 |
+  place.js                   |     100 |      100 |     100 |     100 |
+ restaurant-page/controllers |     100 |      100 |     100 |     100 |
+  restaurant-page.js         |     100 |      100 |     100 |     100 |
+ restaurant-page/routes      |     100 |      100 |     100 |     100 |
+  restaurant-page.js         |     100 |      100 |     100 |     100 |
+ restaurant-page/services    |     100 |      100 |     100 |     100 |
+  restaurant-page.js         |     100 |      100 |     100 |     100 |
+ restaurant/controllers      |     100 |      100 |     100 |     100 |
+  restaurant.js              |     100 |      100 |     100 |     100 |
+ restaurant/routes           |     100 |      100 |     100 |     100 |
+  restaurant.js              |     100 |      100 |     100 |     100 |
+ restaurant/services         |     100 |      100 |     100 |     100 |
+  restaurant.js              |     100 |      100 |     100 |     100 |
+ review/controllers          |     100 |      100 |     100 |     100 |
+  review.js                  |     100 |      100 |     100 |     100 |
+ review/routes               |     100 |      100 |     100 |     100 |
+  review.js                  |     100 |      100 |     100 |     100 |
+ review/services             |     100 |      100 |     100 |     100 |
+  review.js                  |     100 |      100 |     100 |     100 |
+-----------------------------|---------|----------|---------|---------|-------------------
+Test Suites: 1 passed, 1 total
+Tests:       7 passed, 7 total
+Snapshots:   0 total
+Time:        9.118 s
+Ran all test suites.
+Done in 10.20s.
+```
 
 ## Adding New Tests
+**1. Unit Test**
+- go to branch 'develop-unit-test'
+```bash
+cd ./CS360foodadvisor/client/__test__
+touch xxxxx.test.js
+nano touch xxxxx.test.js
+```
+- and then make a new one
+```js
+describe('xxxxxx your feature name xxxxxx', () => {
+  it('xxxxxx anything you want to test xxxxxx', () => {
+    // Test implementation
+  });
+});
+```
+
+**2. Integration Test**
+- go to branch 'develop-integration-test'
+```bash
+cd ./CS360foodadvisor/client/__test__
+touch xxxxx.test.js
+nano touch xxxxx.test.js
+```
+- and then make a new one
+```js
+describe('xxxxxx your feature name xxxxxx', () => {
+  it('xxxxxx anything you want to test xxxxxx', () => {
+    // Test implementation
+  });
+});
+```
+
+## Node.js CI Workflow
