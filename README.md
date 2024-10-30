@@ -22,8 +22,6 @@ The project goal is to improve the existing foodadvisor application by enhancing
 
 ### Features
 - **Feature 1:** Log in
-- **Feature 2:** Register
-- **Feature 3:** Profile
 
 ### Technologies Used
 
@@ -206,107 +204,7 @@ chmod +x bash_script.sh
 #start project
 ./bash_script.sh
  ```
+
+[ภาพ screen capture ของหน้าเว็บแอปพลิเคชันซึ่ง deploy ไวบ้ น EC2]
+
 ![image](https://github.com/user-attachments/assets/3e4f71f2-0a51-4a1f-999d-9fec108b8157)
-
-## Unit and Integration Testing Overview
-**1. The Importance of Unit and Integration Testing**
-- Introduction to the differences between Unit and Integration testing:
-	- Unit Testing: Testing individual pieces of code or functions to ensure correctness at a granular level.
-	- Integration Testing: Testing the interactions between multiple pieces of code to verify that each unit works well when connected together.
- 
-**2. Unit Testing with Jest**
-- Introduction to Jest: A JavaScript testing framework that is easy to use and supports writing Unit Tests effectively.
-- Writing Unit Tests with Jest:
-	- Initial setup of Jest
-	- Example of testing a small function with Jest
-	- Using Jest matchers, such as .toBe() and .toEqual()
- 
-**3. Integration Testing with Supertest**
-- Introduction to Supertest: A tool for testing HTTP requests, specifically for API testing.
-- Using Supertest with Jest for API testing:
-	- How to install Supertest
-	- Example of testing an API endpoint with Supertest
-	- Setting up test data and checking the response status of the API
- 
-**4. API Testing in Strapi with Strapi Testing Utils**
-- Introduction to Strapi Testing Utils: A set of testing tools developed to support Unit and Integration Testing for projects using Strapi.
-- Using Strapi Testing Utils to test APIs and functions in Strapi
-
-## Setting Up Tests
-To set up the environment for testing, you’ll need to install Node.js, Git, and Yarn by following these steps:
-
-**Step 1: Install NVM (Node Version Manager)**
-1. Install NVM:
- ```bash
- curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
- ```
-2. Load the NVM settings into the shell:
-```bash
- source ~/.bashrc
-```   
-3. Install Node.js version 16:
-```bash
-nvm install 16
- ```  
-4. Use Node.js version 16:
-```bash
-nvm use 16
-```  
-5. Verify the Node.js version:
-```bash
-node -v
-```
- 
-**Step 2: Update the System** 
-
-Run the following command to update all packages on the system:
-```bash
-sudo yum update -y
-```
-
-**Step 3: Install Git** 
-
-Install Git using the command:
-```bash
-sudo yum install -y git
-```
-
-**Step 4: Install Yarn** 
-
-install Yarn using npm:
-```bash
-npm install -g yarn
-```
-
-## Setting Up API and Client Tests
-**Setting Up API Tests**
-
-1. Navigate to the Client directory:
-```bash
-cd /CS360foodadvisor/api
-```
-
-2. Install dependencies, seed the database, and start the development server:
-```bash
-yarn install && yarn seed && yarn develop
-```
-
-**Setting Up Client Tests**
-
-1. Navigate to the Client directory:
-```bash
-cd /CS360foodadvisor/client
-```
-
-2. Install dependencies and start the client development server:
-```bash
-yarn install && yarn dev
-```
-
-## Test File Structure
-
-## Test Coverage
-
-## Viewing Test Results
-
-## Adding New Tests
