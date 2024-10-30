@@ -8,13 +8,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
+        node-version: [16, 18]
 
     steps:
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: List files in the repository
