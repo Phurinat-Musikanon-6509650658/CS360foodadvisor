@@ -19,6 +19,9 @@ jobs:
           ls ${{ github.workspace }}
       
       - run: npm install -g yarn
+      - run: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+      - run: nvm install 16
+      - run: nvm use 16
       - name: Download dependencies
         working-directory: ./api
         run: |
