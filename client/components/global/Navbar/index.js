@@ -3,6 +3,7 @@ import Cta from './cta';
 import LocalSwitch from './localSwitch';
 import Logo from './logo';
 import Nav from './nav';
+import Link from 'next/link';
 
 import GitHubButton from 'react-github-btn';
 
@@ -15,31 +16,29 @@ const Navigation = ({ navigation, pageData, type }) => {
           locale={delve(pageData, 'attributes.locale')}
         />
 
-        <Nav
-          links={delve(navigation, 'links')}
-          locale={delve(pageData, 'attributes.locale')}
-        />
+        <Link href="/Search">
+          <a type="button" className="rotate-45 ml-10 mr-10">
+            Search
+          </a>
+        </Link>
 
-        {delve(navigation, 'rightButton') && (
-          <div className="flex">
-            <div className="mr-5 py-4 px-6 hidden 2xl:block">
-              <GitHubButton
-                href="https://github.com/strapi/foodadvisor"
-                data-show-count="true"
-                data-size="large"
-                aria-label="Star strapi/foodadvisor on GitHub"
-              >
-                Star
-              </GitHubButton>
-            </div>
-            <Cta
-              href={delve(navigation, 'rightButton.href')}
-              target={delve(navigation, 'rightButton.target')}
-              label={delve(navigation, 'rightButton.label')}
-            />
-            <LocalSwitch pageData={pageData} type={type} />
-          </div>
-        )}
+        <Link href="/All_restaurants">
+          <a type="button" className="rotate-45 ml-10 mr-10">
+            All restaurants
+          </a>
+        </Link>
+
+        <Link href="/profile">
+          <a type="button" className="rotate-45 ml-10 mr-10">
+            Profile
+          </a>
+        </Link>
+
+        <Link href="/Login">
+          <a type="button" className="py-4 px-6 bg-primary hover:bg-primary-darker text-white transition ease-in duration-200 text-center text-base font-semibold shadow-md rounded-full hidden lg:block">
+            LOGIN
+          </a>
+        </Link>
       </div>
     </header>
   );

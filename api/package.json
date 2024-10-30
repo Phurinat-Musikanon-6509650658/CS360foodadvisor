@@ -20,7 +20,7 @@
     "@strapi/plugin-users-permissions": "4.13.5",
     "@strapi/strapi": "4.13.5",
     "@webbio/strapi-plugin-scheduler": "^0.1.2",
-    "better-sqlite3": "^7.6.2",
+    "better-sqlite3": "^8.0.0",
     "fs-extra": "^10.0.0",
     "strapi-plugin-populate-deep": "^1.1.2",
     "strapi-plugin-todo": "^0.0.9",
@@ -31,7 +31,7 @@
     "name": "A Strapi developer"
   },
   "strapi": {
-    "uuid": "9267dde0-dde7-4f0f-a715-79e91590dca5"
+    "uuid": "FOODADVISOR-LOCAL-18dbe9bd-b98e-4cdc-859c-ba5b11c2f460"
   },
   "engines": {
     "node": ">=14.x.x <=18.x.x",
