@@ -7,7 +7,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    await instance.destroy(); 
+    await stopStrapi();
 });
 
 describe("strapi instance", () => {
