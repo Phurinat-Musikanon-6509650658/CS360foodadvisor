@@ -205,7 +205,7 @@ chmod +x bash_script.sh
 
 #start project
 ./bash_script.sh
- ```
+ ````
 ![image](https://github.com/user-attachments/assets/3e4f71f2-0a51-4a1f-999d-9fec108b8157)
 
 ## Unit and Integration Testing Overview
