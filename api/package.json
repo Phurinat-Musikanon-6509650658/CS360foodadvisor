@@ -8,9 +8,9 @@
     "start": "strapi start",
     "build": "strapi build",
     "strapi": "strapi",
-    "seed": "node script/seed.js"
+    "seed": "node script/seed.js",
+    "test": "jest --runInBand --coverage=true --detectOpenHandles"
   },
-  "devDependencies": {},
   "dependencies": {
     "@ckeditor/strapi-plugin-ckeditor": "^0.0.7",
     "@offset-dev/strapi-calendar": "^0.0.10",
@@ -37,5 +37,29 @@
     "node": ">=14.x.x <=18.x.x",
     "npm": ">=6.0.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "jest": {
+    "collectCoverageFrom": [
+      "src/api/**/*.js"
+    ],
+    "coverageReporters": [
+      "clover",
+      "json",
+      "text"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      ".tmp",
+      ".cache"
+    ],
+    "modulePathIgnorePatterns": [
+      "./build"
+    ],
+    "testEnvironment": "node"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "sqlite3": "^5.1.7",
+    "supertest": "^7.0.0"
+  }
 }

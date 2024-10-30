@@ -1,0 +1,30 @@
+name: appTest
+run-name: ${{ github.actor }} is testing out GitHub Actions
+on: [push]
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node-version: [16.x]
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      
+      - run: npm install -g yarn
+      - name: Download dependencies
+        working-directory: ./api
+        run: |
+          yarn && yarn seed
+          npm install --save-dev jest supertest
+      - name: run test
+        working-directory: ./api/test
+        run: npm test
+      - run: echo "🍏 This job's status is ${{ job.status }}."
