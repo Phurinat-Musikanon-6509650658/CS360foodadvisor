@@ -484,6 +484,55 @@ it('should warning if use wrong Email format', async () => {
    format is used.
   
 #### Integration Test
+```js
+describe('Login API Test', () => {
+    it('should register', async () => {
+        const res = await request(strapi.server.httpServer)
+            .post('/api/auth/local/register')
+            .send({
+                username: "test1",
+                email: "test1@gmail.com",
+                password: "test1pass",
+                job: "Student"
+            })
+
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toHaveProperty('jwt');
+        userID = res.body.user.id;
+    });
+    // Test implementation
+})
+```
+
+Here's the English translation of the explanation:  
+
+---
+
+- **`it('should register', async () => { ... })`**  
+   - Defines a test with the name **`should register`**.  
+   - Uses the `async` keyword to support asynchronous operations.  
+
+- **`const res = await request(strapi.server.httpServer)`**  
+   - Utilizes **Supertest** to send an HTTP request to the Strapi server using `strapi.server.httpServer` to point to the server.  
+
+- **`.post('/api/auth/local/register')`**  
+   - Specifies a **POST** request to the endpoint `/api/auth/local/register`, which is Strapi’s endpoint for user registration.  
+
+- **`.send({...})`**  
+   - Sends data in JSON format to the server to create a new user with the following fields:  
+      - `username`: The username  
+      - `email`: The email address  
+      - `password`: The password  
+      - `job`: The user’s role or status, e.g., "Student"  
+
+- **`expect(res.statusCode).toBe(200);`**  
+   - Ensures that the response from the server has an HTTP status code of **200** (indicating successful registration).  
+
+- **`expect(res.body).toHaveProperty('jwt');`**  
+   - Verifies that the API response (`res.body`) contains the `jwt` property, which is the JSON Web Token used for authentication.  
+
+- **`userID = res.body.user.id;`**  
+   - Extracts the `id` of the newly registered user from the response (`res.body.user.id`) and stores it in the variable `userID` (which might be used in subsequent tests).  
 
 
 ## Viewing Test Results
