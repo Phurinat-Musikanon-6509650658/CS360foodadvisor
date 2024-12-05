@@ -1,0 +1,33 @@
+name: appTest
+run-name: ${{ github.actor }} is testing out GitHub Actions
+on: [push]
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        node-version: [16.x]
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install -g yarn
+      - name: Download dependencies for Strapi
+        working-directory: ./api
+        run: yarn && yarn seed
+      - name: Download test tool
+        working-directory: ./api
+        run: npm install --save-dev jest supertest
+      - name: run test
+        working-directory: ./api
+        run: npm test
