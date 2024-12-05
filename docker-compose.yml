@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  backend:
+    build:
+      context: ./api
+    image: pheera/backend_image:latest
+    container_name: backend
+    ports:
+      - "1337:1337"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=1337
+      - SERVER_URL=http://backend:1337
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./client
+    image: pheera/frontend_image:latest
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:1337
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
