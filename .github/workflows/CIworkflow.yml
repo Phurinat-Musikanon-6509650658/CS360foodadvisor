@@ -28,7 +28,8 @@ jobs:
         run: docker-compose -f ./docker-compose.yml up --build -d
         
       - name: Push to dockerHub
-        run: docker-compose -f ./docker-compose.yml push
+        run: |
+          docker-compose -f ./docker-compose.yml push
 
           
       
