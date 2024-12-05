@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-  Build-docker-image:
+  Build-docker-images:
     runs-on: ubuntu-latest
     steps:
       - name: login docker
