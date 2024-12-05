@@ -2,25 +2,6 @@ name: CIworkflow
 run-name: ${{ github.actor }} is testing out GitHub Actions
 on: [push]
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-latest]
-        node-version: [16.x]
-
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
   Build-docker-images:
     runs-on: ubuntu-latest
     steps:
@@ -29,6 +10,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build docker image
+        run: docker-compose -f ./docker-compose.yml up --build -d
+      - name: Push to dockerHub
+        run: docker-compose -f ./docker-compose.yml push
 
           
       
