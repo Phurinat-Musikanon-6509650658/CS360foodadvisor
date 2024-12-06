@@ -17,6 +17,8 @@ jest.mock('react-github-btn', () => {
 jest.mock('next/router', () => ({
     useRouter: jest.fn(),
 }))
+
+jest.mock('../components/global/Navbar/nav', () => () => <div>Mock Nav</div>);
  
 describe('Login and Register TEST', () => {
     let push;
