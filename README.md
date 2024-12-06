@@ -1,3 +1,4 @@
+
 # CS360 1/2567 Term Project: [FoodAdvisor]
 
 ## Group Information
@@ -29,7 +30,7 @@ The project goal is to improve the existing foodadvisor application by enhancing
 
 - **Backend:** Strapi V4
 
-- **Frontend:** React.js 
+- **Frontend:** React.js , Next.js
 
 - **Hosting/Deployment:** AWS EC2
 
@@ -232,51 +233,48 @@ chmod +x bash_script.sh
 - Introduction to Strapi Testing Utils: A set of testing tools developed to support Unit and Integration Testing for projects using Strapi.
 - Using Strapi Testing Utils to test APIs and functions in Strapi
 
-## Setting Up Tests
+In this project we have 10 test cases divided into 4 Unit test and 6 Integration test
+
+## Setting Up Before Tests
 To set up the environment for testing, you’ll need to install Node.js, Git, and Yarn by following these steps:
 
-**Step 1: Install NVM (Node Version Manager)**
-1. Install NVM:
- ```bash
- curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
- ```
-2. Load the NVM settings into the shell:
-```bash
- source ~/.bashrc
-```   
-3. Install Node.js version 16:
-```bash
-nvm install 16
- ```  
-4. Use Node.js version 16:
-```bash
-nvm use 16
-```  
-5. Verify the Node.js version:
-```bash
-node -v
-```
- 
-**Step 2: Update the System** 
-
-Run the following command to update all packages on the system:
-```bash
-sudo yum update -y
-```
-
-**Step 3: Install Git** 
-
-Install Git using the command:
-```bash
-sudo yum install -y git
-```
-
-**Step 4: Install Yarn** 
-
-install Yarn using npm:
-```bash
-npm install -g yarn
-```
+-   Install test tools
+    ```bash
+        yarn add --dev jest supertest
+    ```
+-   in file  `package.json`  add  **test**  command to scripts section
+    ```js
+        # add test command to scripts section
+        "scripts": {
+            "develop": "strapi develop",
+            "start": "strapi start",
+            "build": "strapi build",
+            "strapi": "strapi",
+            "test":"jest --runInBand --coverage=true"
+        },
+    ```
+    and add those lines at the bottom of file
+    ```js
+        "jest": {
+            "collectCoverageFrom": [
+                "src/api/**/*.js"
+                ],
+            "coverageReporters": [
+                "clover",
+                "json",
+                "text"
+                ],
+            "testPathIgnorePatterns": [
+                "/node_modules/",
+                ".tmp",
+                ".cache"
+                ],
+            "modulePathIgnorePatterns": [
+                "./build"
+                ],
+            "testEnvironment": "node"
+        }
+	```
 
 ## Setting Up API and Client Tests
 **Setting Up API Tests**
@@ -286,9 +284,9 @@ npm install -g yarn
 cd /CS360foodadvisor/api
 ```
 
-2. Install dependencies, seed the database, and start the development server:
+2. Install dependencies, and start test:
 ```bash
-yarn install && yarn seed && yarn develop
+yarn install && yarn test
 ```
 
 **Setting Up Client Tests**
@@ -298,9 +296,9 @@ yarn install && yarn seed && yarn develop
 cd /CS360foodadvisor/client
 ```
 
-2. Install dependencies and start the client development server:
+2. Install dependencies and start test:
 ```bash
-yarn install && yarn dev
+yarn install && yarn test
 ```
 
 ## Test File Structure
@@ -336,480 +334,42 @@ CS360foodadvisor/
 ```
 
 ## Test Coverage
-#### Unit Test
+### Unit Test
+**Login Test Cases:**
 
-**Login Test**
-```js
-describe('Login and Register TEST', () => {
-    let push;
+1.  **Successful Login and Redirect:**
+    -   Simulates valid user credentials.
+    -   Checks if the user is redirected to the profile page after login.
+    -   Verifies the token is stored in localStorage.
+2.  **Login Failure with Error Message:**
+    -   Simulates incorrect user credentials.
+    -   Checks if the appropriate error message ("Invalid credentials") is displayed.
 
-    beforeEach(() => {
-        push = jest.fn();
-        useRouter.mockReturnValue({ push });
-        fetch.resetMocks();
-    });
+**Registration Test Cases:**
 
-    it('should login successfully and redirect to /profile', async () => {
-        // Mock API response
-        fetch.mockResponseOnce(JSON.stringify({ jwt: 'fake-jwt-token' }));
-
-        render(<Login />);
-        
-        // Input identifier and password
-        fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'user@example.com' } });
-        fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'password123' } });
-
-        // Submit the form
-        fireEvent.click(screen.getByText('Login'));
-
-        // Wait for redirection
-        await waitFor(() => expect(push).toHaveBeenCalledWith('/profile'));
-        expect(localStorage.getItem('token')).toBe('fake-jwt-token');
-    });
-    // Test implementation
-})
-```
-
-- **Mock API Response**: The line `fetch.mockResponseOnce` simulates an API response, returning a JSON object with a `jwt` key and a token value (`'fake-jwt-token'`). This allows us to test without needing a real API connection.
-
-- **Render Component**: The `render(<Login />)` function displays the `Login` component for testing.
-
-- **Input Data**: `fireEvent.change` simulates entering data into the `Email` and `Password` fields.
-   - `screen.getByPlaceholderText('Email')` finds the field with the placeholder `Email` and sets the value to `'user@example.com'`.
-   - `screen.getByPlaceholderText('Password')` finds the password field and sets it to `'password123'`.
-
-- **Click Login Button**: The `fireEvent.click` simulates clicking the button labeled `Login` to submit the login form.
-
-- **Wait for Redirection**: The `waitFor` function waits for the `push` function to be called with the path `'/profile'`, confirming that, after a successful login, the page should redirect to the `profile` page.
-
-- **Check Token in Local Storage**: The line `expect(localStorage.getItem('token')).toBe('fake-jwt-token')` confirms that the received token was stored in `localStorage`.
-
----
-
-```js
-    it('should display error message on login failure', async () => {
-        fetch.mockResponseOnce(JSON.stringify({ error: { message: 'Invalid credentials' } }), { status: 400 });
-
-        render(<Login />);
-
-        fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'wronguser@example.com' } });
-        fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'wrongpassword' } });
-        fireEvent.click(screen.getByText('Login'));
-
-        await waitFor(() => screen.getByText('Invalid credentials'));
-    });
-```
-
-- **Mock API Response**: The line `fetch.mockResponseOnce` simulates a failed API response, returning an error message (`'Invalid credentials'`) in JSON format and setting the status to `400`. This mimics an unsuccessful login attempt due to incorrect credentials.
-
-- **Render Component**: The `render(<Login />)` function displays the `Login` component, allowing us to simulate user interactions and verify output.
-
-- **Enter Incorrect Data**: 
-   - `fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'wronguser@example.com' } })` simulates typing an incorrect email into the email field.
-   - `fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'wrongpassword' } })` simulates typing an incorrect password into the password field.
-
-- **Click Login Button**: `fireEvent.click(screen.getByText('Login'))` simulates clicking the login button to submit the form.
-
-- **Wait for Error Message**: The `await waitFor(() => screen.getByText('Invalid credentials'))` line waits for the error message `'Invalid credentials'` to appear on the screen, confirming that the component correctly handles and displays login errors when 
-  authentication fails.
-
----
-
-**Register Test**
-```js
-describe('Login and Register TEST', () => {
-    let push;
-
-    beforeEach(() => {
-        push = jest.fn();
-        useRouter.mockReturnValue({ push });
-        fetch.resetMocks();
-    });
-
-    it('should Register successfully and redirect to login page', async () => {
-        fetch.mockResponseOnce(JSON.stringify({ jwt: 'fake-jwt-token' }));
-
-        render(<Register/>);
-
-        fireEvent.change(screen.getByPlaceholderText('Username'), { target: { value: 'test1' }});
-        fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test1@gmail.com' }});
-        fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'test1pass' }});
-        fireEvent.change(screen.getByPlaceholderText('Job'), { target: { value: 'Student' }});
-        fireEvent.click(screen.getByText('Register'));
-
-        await waitFor(() => expect(push).toHaveBeenCalledWith('/Login'));
-    })
-    // Test implementation
-})
-```
-
-- **Mock API Response**: The `fetch.mockResponseOnce` line simulates a successful API response, returning a JSON object with a `jwt` key and a token value (`'fake-jwt-token'`). This is used to mock the registration success.
-
-- **Render Component**: `render(<Register/>)` renders the `Register` component so that we can simulate user input and test functionality.
-
-- **Enter Registration Information**:
-   - `fireEvent.change(screen.getByPlaceholderText('Username'), { target: { value: 'test1' }})` simulates typing a username (`'test1'`) into the Username field.
-   - `fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test1@gmail.com' }})` simulates entering an email (`'test1@gmail.com'`).
-   - `fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'test1pass' }})` simulates typing a password (`'test1pass'`).
-   - `fireEvent.change(screen.getByPlaceholderText('Job'), { target: { value: 'Student' }})` simulates entering a job title (`'Student'`).
-
-- **Click Register Button**: `fireEvent.click(screen.getByText('Register'))` simulates clicking the register button to submit the form.
-
-- **Wait for Redirection**: The `await waitFor(() => expect(push).toHaveBeenCalledWith('/Login'))` line waits until the `push` function is called with the path `'/Login'`, confirming that after successful registration, the user is redirected to the login page.
-
-```js
-it('should warning if use wrong Email format', async () => {
-        fetch.mockResponseOnce(JSON.stringify({ error: { message: 'email must be a valid email' }}), { status: 400 })
-
-        render(<Register/>);
-
-        fireEvent.change(screen.getByPlaceholderText('Username'), { target: { value: 'test1' }});
-        fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test1' }});
-        fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'test1pass' }});
-        fireEvent.change(screen.getByPlaceholderText('Job'), { target: { value: 'Student' }});
-        fireEvent.click(screen.getByText('Register'));
-
-        await waitFor(() => screen.getByText('email must be a valid email'));
-    })
-```
-
-- **Mock API Response**: `fetch.mockResponseOnce` simulates a failed response from the API, returning an error message (`'email must be a valid email'`) in JSON format with a `400` status code. This mocks the backend validation of the email format.
-
-- **Render Component**: `render(<Register/>)` renders the `Register` component so we can interact with it.
-
-- **Enter Registration Information with Invalid Email**:
-   - `fireEvent.change(screen.getByPlaceholderText('Username'), { target: { value: 'test1' }})` simulates typing `'test1'` as the username.
-   - `fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'test1' }})` simulates entering an invalid email format (`'test1'`), which is missing the typical structure of an email (like `@domain.com`).
-   - `fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'test1pass' }})` simulates entering `'test1pass'` as the password.
-   - `fireEvent.change(screen.getByPlaceholderText('Job'), { target: { value: 'Student' }})` simulates entering `'Student'` as the job.
-
-- **Click Register Button**: `fireEvent.click(screen.getByText('Register'))` simulates clicking the register button to submit the form.
-
-- **Wait for Error Message**: `await waitFor(() => screen.getByText('email must be a valid email'))` waits for the error message `'email must be a valid email'` to appear on the screen, verifying that the component correctly displays a warning when an invalid email 
-   format is used.
-
+1.  **Successful Registration and Redirect:**
+    -   Simulates valid user input for registration.
+    -   Verifies redirection to the login page after successful registration.
+    
+2.  **Invalid Email Format Warning:**
+    -   Simulates registration with an invalid email format.
+    -   Checks if an appropriate error message ("email must be a valid email") is displayed.
 ---
   
-#### Integration Test
-```js
-describe('Login API Test', () => {
-    it('should register', async () => {
-        const res = await request(strapi.server.httpServer)
-            .post('/api/auth/local/register')
-            .send({
-                username: "test1",
-                email: "test1@gmail.com",
-                password: "test1pass",
-                job: "Student"
-            })
+### Integration Test
 
-        expect(res.statusCode).toBe(200);
-        expect(res.body).toHaveProperty('jwt');
-        userID = res.body.user.id;
-    });
-    // Test implementation
-})
-```
-
-- **`it('should register', async () => { ... })`**  
-   - Defines a test with the name **`should register`**.  
-   - Uses the `async` keyword to support asynchronous operations.  
-
-- **`const res = await request(strapi.server.httpServer)`**  
-   - Utilizes **Supertest** to send an HTTP request to the Strapi server using `strapi.server.httpServer` to point to the server.  
-
-- **`.post('/api/auth/local/register')`**  
-   - Specifies a **POST** request to the endpoint `/api/auth/local/register`, which is Strapi’s endpoint for user registration.  
-
-- **`.send({...})`**  
-   - Sends data in JSON format to the server to create a new user with the following fields:  
-      - `username`: The username  
-      - `email`: The email address  
-      - `password`: The password  
-      - `job`: The user’s role or status, e.g., "Student"  
-
-- **`expect(res.statusCode).toBe(200);`**  
-   - Ensures that the response from the server has an HTTP status code of **200** (indicating successful registration).  
-
-- **`expect(res.body).toHaveProperty('jwt');`**  
-   - Verifies that the API response (`res.body`) contains the `jwt` property, which is the JSON Web Token used for authentication.  
-
-- **`userID = res.body.user.id;`**  
-   - Extracts the `id` of the newly registered user from the response (`res.body.user.id`) and stores it in the variable `userID` (which might be used in subsequent tests).  
-
----
-
-```js
-it('should return JWT token when login is successful', async () => {
-        const res = await request(strapi.server.httpServer)
-            .post('/api/auth/local')
-            .send({
-                identifier: 'test1@gmail.com',
-                password: 'test1pass',
-            });
-
-        // ตรวจสอบว่า response status = 200 และมี JWT ใน response
-        expect(res.statusCode).toBe(200);
-        expect(res.body).toHaveProperty('jwt');
-        expect(typeof res.body.jwt).toBe('string');
-        token = res.body.jwt;
-    });
-```
-
-- **`it('should return JWT token when login is successful')` **  
-   - This describes the behavior being tested: ensuring a JWT token is returned upon a successful login.
-
-- **Send HTTP POST Request:**  
-   ```js
-   const res = await request(strapi.server.httpServer)
-       .post('/api/auth/local')
-       .send({
-           identifier: 'test1@gmail.com',
-           password: 'test1pass',
-       });
-   ```
-   - **`request(strapi.server.httpServer)`**: Sends an HTTP request to the server (powered by Strapi).
-   - **`.post('/api/auth/local')`**: Makes a POST request to the `/api/auth/local` endpoint, which is typically used for user authentication.
-   - **`.send({...})`**: Sends the login credentials as the request body. It includes:
-     - `identifier`: The user's email (`test1@gmail.com`).
-     - `password`: The user's password (`test1pass`).
-
-- **Verify HTTP Response Status Code**  
-   ```js
-   expect(res.statusCode).toBe(200);
-   ```
-   - Checks that the response status code is `200`, indicating a successful request.
-
-- **Check for JWT in Response Body:**  
-   ```js
-   expect(res.body).toHaveProperty('jwt');
-   expect(typeof res.body.jwt).toBe('string');
-   ```
-   - **`expect(res.body).toHaveProperty('jwt')`:** Ensures the response body contains a `jwt` property.
-   - **`expect(typeof res.body.jwt).toBe('string')`:** Confirms that the `jwt` property is a string.
-
-- **Store JWT Token:**  
-   ```js
-   token = res.body.jwt;
-   ```
-   - Saves the received JWT token into a variable (`token`) for potential use in other tests.
-
----
-
-```js
-it('should return error message when login fails', async () => {
-        const res = await request(strapi.server.httpServer)
-            .post('/api/auth/local')
-            .send({
-                identifier: 'wrong-email@gmail.com',
-                password: 'wrong-password',
-            });
-
-        // ตรวจสอบว่า response status = 400 และมีข้อความ error
-        expect(res.statusCode).toBe(400);
-        expect(res.body).toHaveProperty('error');
-        expect(res.body.error.message).toBe('Invalid identifier or password');
-    });
-```
-
-- **`it('should return error message when login fails', async () => { ... });`**  
-   - This test verifies that the API correctly handles a failed login attempt by returning the expected error response.
-   - The name clearly describes the intended outcome: an error message should be returned when the login fails.
-
-- **Making a POST Request**
-   ```javascript
-   const res = await request(strapi.server.httpServer)
-       .post('/api/auth/local')
-       .send({
-           identifier: 'wrong-email@gmail.com',
-           password: 'wrong-password',
-       });
-   ```
-   - **`request(strapi.server.httpServer)`**: Uses the `supertest` library to send HTTP requests to the server. Here, it targets the server instance provided by `strapi`.
-   - **`.post('/api/auth/local')`**: Specifies the API endpoint for login.
-   - **`.send({...})`**: Sends a JSON payload with incorrect credentials:
-     - `identifier`: Email used for login (`wrong-email@gmail.com`).
-     - `password`: Password used for login (`wrong-password`).
-
-- **Assertions**:
-   ```javascript
-   expect(res.statusCode).toBe(400);
-   ```
-   - **Checks HTTP Status Code**: Ensures that the response has a `400` status code, which indicates a client error (e.g., invalid input).
-
-   ```javascript
-   expect(res.body).toHaveProperty('error');
-   ```
-   - **Checks Error Property**: Ensures that the response body contains an `error` property, indicating that the API correctly identifies the issue.
-
-   ```javascript
-   expect(res.body.error.message).toBe('Invalid identifier or password');
-   ```
-   - **Validates Error Message**: Verifies that the `message` field within the `error` object matches the expected error message: `"Invalid identifier or password"`.
-
----
-
-```js
-it('should error when EMAIL of Username are already in use', async () => {
-        const res = await request(strapi.server.httpServer)
-            .post('/api/auth/local/register')
-            .send({
-                username: "test1",
-                email: "test1@gmail.com",
-                password: "test1pass",
-                job: "Student"
-            })
-
-        expect(res.statusCode).toBe(400);
-        expect(res.body.error.message).toBe("Email or Username are already taken");
-    });
-```
-
-- **`it('should error when EMAIL of Username are already in use', async () => { ... });`**  
-   - The test is described as: should error when EMAIL or Username are already in use
-   - This indicates that the test ensures the API handles duplicate user registration attempts correctly.
-
-- **HTTP Request**
-   - The test sends a **POST** request to the `/api/auth/local/register` endpoint of the Strapi server
-     ```javascript
-     request(strapi.server.httpServer)
-         .post('/api/auth/local/register')
-         .send({
-             username: "test1",
-             email: "test1@gmail.com",
-             password: "test1pass",
-             job: "Student"
-         });
-     ```
-   - The `send` method includes user data for registration
-     - `username`: `"test1"`
-     - `email`: `"test1@gmail.com"`
-     - `password`: `"test1pass"`
-     - `job`: `"Student"`
-
-- **Expected Response**
-   - The test checks that the server responds with
-     ```javascript
-     expect(res.statusCode).toBe(400);
-     ```
-     - The HTTP status code `400` indicates a **Bad Request**.
-       
-   - Additionally, it verifies that the error message in the response body matches
-     ```javascript
-     expect(res.body.error.message).toBe("Email or Username are already taken");
-     ```
-     - This ensures that the server explicitly informs the client about the issue.
-    
-- **Purpose**
-   - This test confirms that the API prevents duplicate registrations by rejecting requests where either the `email` or `username` is already in use.
-   - It also validates that the error message is clear and specific.
-
----
-
-```js
-it('should error if Register with wrong EMAIL format', async () => {
-        const res = await request(strapi.server.httpServer)
-            .post('/api/auth/local/register')
-            .send({
-                username: "testtest",
-                email: "testtest@", // ขาด gmail.com
-                password: "testtestpass",
-                job: "Student"
-            })
-
-        expect(res.statusCode).toBe(400);
-        expect(res.body.error.message).toBe("email must be a valid email");
-    });
-```
-
-- **`it('should error if Register with wrong EMAIL format', async () => { ... });`**  
-   - This defines a test case with a description: **"should error if Register with wrong EMAIL format"**.
-   - `async` is used because the test involves an asynchronous HTTP request.
-
-- **HTTP Request**  
-   ```javascript
-   const res = await request(strapi.server.httpServer)
-       .post('/api/auth/local/register')
-       .send({
-           username: "testtest",
-           email: "testtest@", // Missing gmail.com
-           password: "testtestpass",
-           job: "Student"
-       });
-   ```
-   - `request(strapi.server.httpServer)`: Initiates an HTTP request to the server.
-   - `.post('/api/auth/local/register')`: Sends a POST request to the registration endpoint.
-   - `.send({...})`: Sends the request body with the following fields:
-     - `username`: A sample username.
-     - `email`: An invalid email address (`testtest@`) missing the domain (e.g., `gmail.com`).
-     - `password`: A sample password.
-     - `job`: A sample job role.
-   - The result of this request is stored in the `res` variable.
-
-- **Assertions**  
-   ```javascript
-   expect(res.statusCode).toBe(400);
-   expect(res.body.error.message).toBe("email must be a valid email");
-   ```
-   - `expect(res.statusCode).toBe(400);`: Checks that the server responds with a **400 Bad Request** status code, indicating a validation error.
-   - `expect(res.body.error.message).toBe("email must be a valid email");`: Ensures the error message returned in the response body matches **"email must be a valid email"**, confirming that the server correctly identifies the invalid email format.
-
-- **Context**  
-   - The test is part of an endpoint validation process to ensure that only valid data can be used for user registration. 
-   - By testing edge cases like invalid email formats, this ensures the robustness and security of the application.
-
----
-
-```js
-it('should error if not enter JOB when register', async () => {
-        const res = await request(strapi.server.httpServer)
-            .post('/api/auth/local/register')
-            .send({
-                username: "testtest1",
-                email: "testtest1@gmail.com",
-                password: "testtestpass",
-            })
-
-        expect(res.statusCode).toBe(400);
-        expect(res.body.error.message).toBe("job must be defined.");
-    });
-```
-
-- **`it('should error if not enter JOB when register', async () => { ... });`**  
-   - Defines a test case with the description: **"should error if not enter JOB when register"**.
-   - The function is marked as `async` because the test involves an asynchronous HTTP request.
-
-- **HTTP Request**
-```javascript
-const res = await request(strapi.server.httpServer)
-    .post('/api/auth/local/register')
-    .send({
-        username: "testtest1",
-        email: "testtest1@gmail.com",
-        password: "testtestpass",
-    });
-```
-  - **`request(strapi.server.httpServer)`**: Creates an HTTP request to the server.
-  - **`.post('/api/auth/local/register')`**: Sends a POST request to the `/api/auth/local/register` endpoint.
-  - **`.send({...})`**: Sends the request body with the following fields:
-  - `username`: A sample username (`testtest1`).
-  - `email`: A valid email address (`testtest1@gmail.com`).
-  - `password`: A sample password (`testtestpass`).
-  - **Note**: The `job` field is intentionally omitted in this test to simulate the missing required field scenario.
-  - The result of this request is stored in the `res` variable.
-
-- **Assertions**
-```javascript
-expect(res.statusCode).toBe(400);
-expect(res.body.error.message).toBe("job must be defined.");
-```
-  - **`expect(res.statusCode).toBe(400);`**: Verifies that the server responds with a **400 Bad Request** status code, indicating a validation error.
-  - **`expect(res.body.error.message).toBe("job must be defined.");`**: Checks that the server returns the correct error message: **"job must be defined."**, confirming that the `job` field is required
-
-- **Context**
-  - The test is part of the backend validation process for the registration feature.
-  - It ensures that the server enforces the requirement for the `job` field, preventing incomplete or invalid data from being processed.
-
+-   **User Registration Test**
+    -   Validates successful user registration with valid inputs.
+-   **Login with Correct Credentials**
+    -   Ensures that a user receives a JWT token upon successful login.
+-   **Login with Incorrect Credentials**
+    -   Verifies that an error message is returned when the login attempt fails.
+-   **Duplicate Registration**
+    -   Ensures that duplicate email or username registrations are rejected.
+-   **Invalid Email Format**
+    -   Validates that the system correctly identifies and rejects invalid email formats.
+-   **Missing Job Field in Registration**
+    -   Ensures that the registration process fails if the required `job` field is not provided.
 ---
 
 ## Viewing Test Results
