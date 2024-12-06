@@ -1,0 +1,119 @@
+name: CDworkflow
+
+on: [push]
+
+jobs:
+  check-image-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout Repository
+        uses: actions/checkout@v3    
+        
+      # Step 2: Check if Docker Image Exists
+      - name: Check if Fronend Docker Image Exists
+        id: check_frontend_image
+        run: |
+          REPOSITORY="${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.FRONTEND_IMAGE }}"  
+          TAG="latest"
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -u "${{ secrets.DOCKERHUB_USERNAME }}:${{ secrets.DOCKERHUB_TOKEN }}" https://hub.docker.com/v2/repositories/${REPOSITORY}/tags/${TAG}/)
+          if [ "$RESPONSE" -ne 200 ]; then
+              echo "Frontend Docker image not found. Exiting workflow."
+              exit 1
+          fi
+          echo "Frontend Docker image exists. Proceeding to deployment."
+
+      - name: Check if Backend Docker Image Exists
+        id: check_backend_image
+        run: |
+          REPOSITORY="${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.BACKEND_IMAGE }}"  
+          TAG="latest"
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -u "${{ secrets.DOCKERHUB_USERNAME }}:${{ secrets.DOCKERHUB_TOKEN }}" https://hub.docker.com/v2/repositories/${REPOSITORY}/tags/${TAG}/)
+          if [ "$RESPONSE" -ne 200 ]; then
+              echo "Backend Docker image not found. Exiting workflow."
+              exit 1
+          fi
+          echo "Backend Docker image exists. Proceeding to deployment."
+
+      # Step 3: Set AWS Credentials in Environment Variables
+      - name: Set AWS Credentials
+        if: ${{ steps.check_frontend_image.outcome == 'success' && steps.check_backend_image.outcome == 'success'}}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: echo "AWS credentials set."
+
+      # Step 4: Create EC2 Instance and Deploy the Application
+      - name: Create EC2 Instance and Deploy the Application
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          # Define instance details
+          INSTANCE_ID=$(aws ec2 run-instances \
+            --image-id ami-06b21ccaeff8cd686 \
+            --instance-type t2.medium \
+            --key-name ${{ secrets.AWS_KP_NAME }} \
+            --security-group-ids ${{ secrets.AWS_SG_ID }} \
+            --user-data file://user-data.sh \
+            --query 'Instances[0].InstanceId' \
+            --output text)
+            
+          echo "Instance ID: $INSTANCE_ID"
+          
+          # Wait for the instance to be running
+          aws ec2 wait instance-running --instance-ids $INSTANCE_ID
+          
+          # Output the instance public DNS
+          INSTANCE_PUBLIC_DNS=$(aws ec2 describe-instances \
+            --instance-ids $INSTANCE_ID \
+            --query 'Reservations[0].Instances[0].PublicDnsName' \
+            --output text)
+          echo "Instance Public DNS: $INSTANCE_PUBLIC_DNS"
+          echo "INSTANCE_PUBLIC_DNS=$INSTANCE_PUBLIC_DNS" >> $GITHUB_ENV
+          
+          INSTANCE_PUBLIC_IPV4=$(aws ec2 describe-instances \
+            --instance-ids $INSTANCE_ID \
+            --query 'Reservations[0].Instances[0].PublicIpAddress' \
+            --output text)
+          echo "Instance Public IPv4: $INSTANCE_PUBLIC_IPV4"
+          echo "INSTANCE_PUBLIC_IPV4=$INSTANCE_PUBLIC_IPV4" >> $GITHUB_ENV
+          sleep 5
+
+        # Step 5: Deploying the Web Application to EC2
+      - name: Connect server and pull image Frontend/Backend
+        env:
+            PRIVATE_KEY: ${{ secrets.KEY_PEM_DATA }}
+            REPOSITORYBACK: "${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.BACKEND_IMAGE }}"
+            REPOSITORYFRONT: "${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.FRONTEND_IMAGE }}"
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SSH_USER }}@${{ env.INSTANCE_PUBLIC_DNS }} << EOF
+          sudo yum install -y docker
+          sudo service docker start
+          echo "BACKEND"
+          sudo docker pull $REPOSITORYBACK:latest
+          sudo docker run -d --name ${{ vars.BACKEND_IMAGE }} \
+          -p 1337:1337 \
+          -e HOST=0.0.0.0 \
+          -e PORT=1337 \
+          -e STRAPI_ADMIN_CLIENT_URL=http://${INSTANCE_PUBLIC_IPV4}:3000 \
+          -e STRAPI_ADMIN_CLIENT_PREVIEW_SECRET=${{ secrets.STRAPI_ADMIN_CLIENT_PREVIEW_SECRET }} \
+          -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+          $REPOSITORYBACK:latest
+          echo "FRONTEND"
+          echo $REPOSITORYFRONT:latest
+          sudo docker pull $REPOSITORYFRONT:latest
+          sudo docker run -d --name ${{ vars.FRONTEND_IMAGE }} \
+          -p 3000:3000 \
+          -e NEXT_PUBLIC_API_URL=http://${INSTANCE_PUBLIC_IPV4}:1337 \
+          -e PREVIEW_SECRET=${{ secrets.PREVIEW_SECRET }} \
+          $REPOSITORYFRONT:latest
+          echo BackEnd http://${INSTANCE_PUBLIC_IPV4}:1337/
+          echo FrontEnd http://${INSTANCE_PUBLIC_IPV4}:3000/
+          EOF
