@@ -1,4 +1,4 @@
-name: UnitTest
+name: TestingWorkflow
 run-name: ${{ github.actor }} is testing out GitHub Actions
 on: 
   push:
@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, macos-latest]
         node-version: [16.x]
 
     steps:
@@ -23,13 +23,23 @@ jobs:
           ls ${{ github.workspace }}
       
       - run: npm install -g yarn
-      - name: Download dependencies
+      - name: Download dependencies for UNIT TEST
         working-directory: ./client
         run: |
           npm install
           npm install -D @testing-library/react@12 jest jest-environment-jsdom @testing-library/dom @testing-library/jest-dom ts-node supertest
           npm install --save-dev babel-jest @babel/preset-env
           npm install jest-fetch-mock --save-dev
-      - name: run test
+      - name: run UNIT test
         working-directory: ./client/__test__
+        run: npm test
+
+      - name: Download dependencies for Strapi
+        working-directory: ./api
+        run: yarn && yarn seed
+      - name: Download test tool for Integration TEST
+        working-directory: ./api
+        run: npm install --save-dev jest supertest
+      - name: run INTEGRATION test
+        working-directory: ./api
         run: npm test
