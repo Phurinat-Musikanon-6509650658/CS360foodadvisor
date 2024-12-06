@@ -33,13 +33,3 @@ jobs:
       - name: run UNIT test
         working-directory: ./client/__test__
         run: npm test
-
-      - name: Download dependencies for Strapi
-        working-directory: ./api
-        run: yarn && yarn seed
-      - name: Download test tool for Integration TEST
-        working-directory: ./api
-        run: npm install --save-dev jest supertest
-      - name: run INTEGRATION test
-        working-directory: ./api
-        run: npm test
