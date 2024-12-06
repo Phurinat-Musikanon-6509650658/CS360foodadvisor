@@ -17,6 +17,9 @@
 
 - Phurinat Musikanon   6509650658
 
+## Table 
+- [Project Goal](#project-goal)
+
 ## Project Goal
 
 The project goal is to improve the existing foodadvisor application by enhancing its features and simplifying the deployment process for users. The aim is to develop a web application that offers users a comprehensive platform for exploring and managing food-related content. It focuses on solving the problem of finding and managing food options through features like secure user registration, advanced search, community-driven reviews, and integration with external APIs for additional information.
