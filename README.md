@@ -22,9 +22,9 @@
    - [Features](#features)
    - [Technologies Used](#technologies-used)
 - [How to deploy and run the project manually](#how-to-deploy-and-run-the-project-manually)
-   - [Create an EC2 Instance](#create-an-EC2-instance)
+   - [Create an EC2 Instance](#create-an-ec2-instance)
    - [Install Required Tools for the Project](#install-required-tools-for-the-project)
-   - [Clone the Project from GitHub to EC2 Instance](#clone-the-project-from-GitHub-to-EC2-Instance)
+   - [Clone the Project from GitHub to EC2 Instance](#clone-the-project-from-github-to-ec2-Instance)
 
 
 ## Project Goal
