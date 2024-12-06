@@ -1,10 +1,11 @@
 name: IntegrationTest
 run-name: ${{ github.actor }} is testing out GitHub Actions
 on: 
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    workflow_run:
+        workflows:
+          - UnitTest
+        types:
+          - completed
 jobs:
   build:
     runs-on: ${{ matrix.os }}
