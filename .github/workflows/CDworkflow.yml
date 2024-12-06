@@ -103,7 +103,6 @@ jobs:
           -e NODE_ENV=production \
           -e HOST=0.0.0.0 \
           -e PORT=1337 \
-          -e SERVER_URL=http://${INSTANCE_PUBLIC_IPV4}:1337
           -e STRAPI_ADMIN_CLIENT_URL=http://${INSTANCE_PUBLIC_IPV4}:3000 \
           -e STRAPI_ADMIN_CLIENT_PREVIEW_SECRET=${{ secrets.STRAPI_ADMIN_CLIENT_PREVIEW_SECRET }} \
           -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
