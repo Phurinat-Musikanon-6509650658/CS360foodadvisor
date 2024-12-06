@@ -84,3 +84,38 @@ jobs:
           echo "Instance Public IPv4: $INSTANCE_PUBLIC_IPV4"
           echo "INSTANCE_PUBLIC_IPV4=$INSTANCE_PUBLIC_IPV4" >> $GITHUB_ENV
           sleep 5
+
+        # Step 5: Deploying the Web Application to EC2
+      - name: Connect server and pull image Frontend/Backend
+        env:
+            PRIVATE_KEY: ${{ secrets.KEY_PEM_DATA }}
+            REPOSITORYBACK: "${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.BACKEND_IMAGE }}"
+            REPOSITORYFRONT: "${{ secrets.DOCKERHUB_USERNAME }}/${{ vars.FRONTEND_IMAGE }}"
+        run: |
+          echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+          ssh -o StrictHostKeyChecking=no -i private_key ${{ secrets.SSH_USER }}@${{ env.INSTANCE_PUBLIC_DNS }} << EOF
+          sudo yum install -y docker
+          sudo service docker start
+          echo "BACKEND"
+          sudo docker pull $REPOSITORYBACK:latest
+          sudo docker run -d --name ${{ vars.BACKEND_IMAGE }} \
+          -p 1337:1337 \
+          -e NODE_ENV=production \
+          -e HOST=0.0.0.0 \
+          -e PORT=1337 \
+          -e SERVER_URL=http://${INSTANCE_PUBLIC_IPV4}:1337
+          -e STRAPI_ADMIN_CLIENT_URL=http://${INSTANCE_PUBLIC_IPV4}:3000 \
+          -e STRAPI_ADMIN_CLIENT_PREVIEW_SECRET=${{ secrets.STRAPI_ADMIN_CLIENT_PREVIEW_SECRET }} \
+          -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+          $REPOSITORYBACK:latest
+          echo "FRONTEND"
+          echo $REPOSITORYFRONT:latest
+          sudo docker pull $REPOSITORYFRONT:latest
+          sudo docker run -d --name ${{ vars.FRONTEND_IMAGE }} \
+          -p 3000:3000 \
+          -e NEXT_PUBLIC_API_URL=http://${INSTANCE_PUBLIC_IPV4}:1337 \
+          -e PREVIEW_SECRET=${{ secrets.PREVIEW_SECRET }} \
+          $REPOSITORYFRONT:latest
+          echo BackEnd http://${INSTANCE_PUBLIC_IPV4}:1337/
+          echo FrontEnd http://${INSTANCE_PUBLIC_IPV4}:3000/
+          EOF
