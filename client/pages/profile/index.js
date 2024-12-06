@@ -1,6 +1,7 @@
 import Layout from '../../components/layout';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import { getStrapiMedia, getStrapiURL } from '../../utils';
 
 const Profile = ({ global, pageData, preview }) => {
   const [newPicture, setPicture] = useState(null);
@@ -16,7 +17,7 @@ const Profile = ({ global, pageData, preview }) => {
     }
 
     const fetchUser = async () => {
-      const res = await fetch('http://localhost:1337/api/users/me?populate=picture', {
+      const res = await fetch(getStrapiURL('/users/me?populate=picture'), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -53,7 +54,7 @@ const Profile = ({ global, pageData, preview }) => {
     formData.append('field', 'picture'); // ฟิลด์ที่เราต้องการอัปเดต
 
     try {
-      const uploadRes = await fetch('http://localhost:1337/api/upload', {
+      const uploadRes = await fetch(getStrapiURL('/upload'), {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body: formData,
@@ -62,7 +63,7 @@ const Profile = ({ global, pageData, preview }) => {
       if (!uploadRes.ok) throw new Error('Upload failed');
 
       // ดึงข้อมูลใหม่อีกครั้งหลังอัปโหลดเสร็จ
-      const updatedUserRes = await fetch(`http://localhost:1337/api/users/${user.id}?populate=picture`, {
+      const updatedUserRes = await fetch(getStrapiURL(`/users/${user.id}?populate=picture`), {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -83,7 +84,7 @@ const Profile = ({ global, pageData, preview }) => {
   if (!user) return <p>Loading...</p>;
 
   const profileImageURL = user.picture
-    ? `http://localhost:1337${user.picture.formats.thumbnail.url}`
+    ? getStrapiMedia(user.picture.formats.thumbnail.url)
     : '/default-profile.png';
 
   console.log(profileImageURL)
