@@ -6,6 +6,7 @@ on:
           - UnitTest
         types:
           - completed
+          
 jobs:
   build:
     runs-on: ${{ matrix.os }}
