@@ -1,6 +1,11 @@
 name: CDworkflow
 
-on: [push]
+on: 
+    workflow_run:
+      workflows:
+        - CIworkflow
+      types:
+        - complete
 
 jobs:
   check-image-and-deploy:
