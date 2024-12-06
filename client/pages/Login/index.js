@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Layout from '../../components/layout';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { getStrapiURL } from '../../utils';
 
 const Login = ({ global, pageData, preview }) => {
   const [identifier, setIdentifier] = useState('');
@@ -21,7 +22,7 @@ const Login = ({ global, pageData, preview }) => {
   const Submit = async (e) => {
     e.preventDefault();
 
-    const res = await fetch('http://localhost:1337/api/auth/local', {
+    const res = await fetch(getStrapiURL('/auth/local'), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
