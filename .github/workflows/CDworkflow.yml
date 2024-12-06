@@ -100,7 +100,6 @@ jobs:
           sudo docker pull $REPOSITORYBACK:latest
           sudo docker run -d --name ${{ vars.BACKEND_IMAGE }} \
           -p 1337:1337 \
-          -e NODE_ENV=production \
           -e HOST=0.0.0.0 \
           -e PORT=1337 \
           -e STRAPI_ADMIN_CLIENT_URL=http://${INSTANCE_PUBLIC_IPV4}:3000 \
