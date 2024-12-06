@@ -17,8 +17,15 @@
 
 - Phurinat Musikanon   6509650658
 
-## Table 
+## Table of Contents 
 - [Project Goal](#project-goal)
+   - [Features](#features)
+   - [Technologies Used](#technologies-used)
+- [How to deploy and run the project manually](#how-to-deploy-and-run-the-project-manually)
+   - [Create an EC2 Instance](#create-an-EC2-instance)
+   - [Install Required Tools for the Project](#install-required-tools-for-the-project)
+   - [Clone the Project from GitHub to EC2 Instance](#clone-the-project-from-GitHub-to-EC2-Instance)
+
 
 ## Project Goal
 
