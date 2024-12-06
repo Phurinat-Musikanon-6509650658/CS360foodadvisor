@@ -5,7 +5,7 @@ on:
       workflows:
         - CIworkflow
       types:
-        - complete
+        - completed
 
 jobs:
   check-image-and-deploy:
