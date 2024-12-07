@@ -83,9 +83,12 @@ const Profile = ({ global, pageData, preview }) => {
 
   if (!user) return <p>Loading...</p>;
 
-  const profileImageURL = user.picture
+  const profileImageURL = user.picture?.formats?.thumbnail
     ? getStrapiMedia(user.picture.formats.thumbnail.url)
-    : '/default-profile.png';
+    : '/default-profile.jpg';
+
+  console.log("User Picture Data:", user.picture);
+  console.log("Profile Image URL:", profileImageURL);
 
   console.log(profileImageURL)
 
@@ -96,21 +99,45 @@ const Profile = ({ global, pageData, preview }) => {
       pageData={pageData}
       preview={preview}
     >
-      <div className="ml-10">
-        <img
-          src={profileImageURL}
-        />
-        <div className="mt-4">
-          <input type="file" onChange={handleFileChange} />
-          <button onClick={updateProfilePicture} className="ring-2 ring-black bg-slate-800 text-white mt-2">
-            Update Profile Picture
+      <div className="flex justify-center bg-gray-50 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full bg-white p-8 rounded-xl shadow-lg border border-gray-200 space-y-6">
+          <div className="text-center">
+            <img
+              src={profileImageURL}
+              alt="Profile"
+              className="w-24 h-24 rounded-full mx-auto shadow-lg"
+            />
+            <div className="mt-4 space-y-4">
+              <input 
+                type="file" 
+                onChange={handleFileChange} 
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200"
+              />
+              <button 
+                onClick={updateProfilePicture} 
+                className="w-full bg-gray-800 text-white py-2 px-4 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+              >
+                Update Profile Picture
+              </button>
+              {error && (
+                <p className="text-red-500 text-sm mt-2">{error}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="text-center space-y-2">
+            <h1 className="text-2xl font-extrabold text-gray-900">Welcome, {user.username}</h1>
+            <p className="text-gray-700 text-sm">Email: {user.email}</p>
+            <p className="text-gray-700 text-sm">Job: {user.job}</p>
+          </div>
+
+          <button 
+            onClick={Logout} 
+            className="w-full bg-gray-800 text-white py-2 px-4 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+          >
+            Logout
           </button>
-          {error && <p className="text-red-500 mt-2">{error}</p>}
         </div>
-        <h1>Welcome, {user.username}</h1>
-        <p>Email: {user.email}</p>
-        <p>Job: {user.job}</p>
-        <button onClick={Logout} className="ring-2 ring-black bg-slate-800 text-white">Logout</button>
       </div>
     </Layout>
   );
