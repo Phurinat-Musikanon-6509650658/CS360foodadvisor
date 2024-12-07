@@ -81,7 +81,7 @@ install_pm2
 source ~/.bashrc
 clear
 
-PREVIEW_SECRET=openssl rand -base64 32
+PREVIEW_SECRET=$(openssl rand -base64 32)
 echo "$PREVIEW_SECRET"
 
 # Setup
