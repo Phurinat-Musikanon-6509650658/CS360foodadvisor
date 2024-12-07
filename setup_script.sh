@@ -102,4 +102,5 @@ check_and_add_env_var "NEXT_PUBLIC_API_URL" "http://$(curl ipinfo.io/ip):1337"
 check_and_add_env_var "PREVIEW_SECRET" "${PREVIEW_SECRET}"
 
 yarn --ignore-engines
+npx next telemetry enable
 pm2 start yarn --name Frontend -- start
