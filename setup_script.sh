@@ -81,13 +81,16 @@ install_pm2
 source ~/.bashrc
 clear
 
+PREVIEW_SECRET=openssl rand -base64 32
+echo "$PREVIEW_SECRET"
+
 # Setup
 cd api
 
 check_and_add_env_var "HOST" "0.0.0.0"
 check_and_add_env_var "PORT" "1337"
-check_and_add_env_var "STRAPI_ADMIN_CLIENT_URL" "http://localhost:1337"
-check_and_add_env_var "STRAPI_ADMIN_CLIENT_PREVIEW_SECRET" "$(openssl rand -base64 32)"
+check_and_add_env_var "STRAPI_ADMIN_CLIENT_URL" "http://$(curl ipinfo.io/ip):3000"
+check_and_add_env_var "STRAPI_ADMIN_CLIENT_PREVIEW_SECRET" "${PREVIEW_SECRET}"
 
 yarn 
 yarn seed
@@ -96,7 +99,7 @@ pm2 start yarn --name Backend -- develop
 cd ../client
 
 check_and_add_env_var "NEXT_PUBLIC_API_URL" "http://$(curl ipinfo.io/ip):1337"
-check_and_add_env_var "PREVIEW_SECRET" "$(openssl rand -base64 32)"
+check_and_add_env_var "PREVIEW_SECRET" "${PREVIEW_SECRET}"
 
 yarn 
 yarn build
