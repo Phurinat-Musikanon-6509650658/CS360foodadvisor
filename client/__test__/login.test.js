@@ -36,8 +36,8 @@ describe('Login and Register TEST', () => {
         render(<Login />);
         
         // Input identifier and password
-        fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'user@example.com' } });
-        fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'password123' } });
+        fireEvent.change(screen.getByPlaceholderText('Enter your email'), { target: { value: 'user@example.com' } });
+        fireEvent.change(screen.getByPlaceholderText('Enter your password'), { target: { value: 'password123' } });
 
         // Submit the form
         fireEvent.click(screen.getByText('Login'));
@@ -52,8 +52,8 @@ describe('Login and Register TEST', () => {
 
         render(<Login />);
 
-        fireEvent.change(screen.getByPlaceholderText('Email'), { target: { value: 'wronguser@example.com' } });
-        fireEvent.change(screen.getByPlaceholderText('Password'), { target: { value: 'wrongpassword' } });
+        fireEvent.change(screen.getByPlaceholderText('Enter your email'), { target: { value: 'wronguser@example.com' } });
+        fireEvent.change(screen.getByPlaceholderText('Enter your password'), { target: { value: 'wrongpassword' } });
         fireEvent.click(screen.getByText('Login'));
 
         await waitFor(() => screen.getByText('Invalid credentials'));
