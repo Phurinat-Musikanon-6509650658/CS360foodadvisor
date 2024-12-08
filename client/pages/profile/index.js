@@ -126,7 +126,7 @@ const Profile = ({ global, pageData, preview }) => {
           </div>
 
           <div className="text-center space-y-2">
-            <h1 className="text-2xl font-extrabold text-gray-900">Welcome, {user.username}</h1>
+            <h1 className="text-2xl font-extrabold text-gray-900">Hello, {user.username}</h1>
             <p className="text-gray-700 text-sm">Email: {user.email}</p>
             <p className="text-gray-700 text-sm">Job: {user.job}</p>
           </div>
